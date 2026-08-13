@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Computer Vision from your practicals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Course companion</div>
+      <h1>Learn Computer Vision</h1>
+      <p>From your subject files, start to finish.</p>
+    </div>
+    <button class="menu-btn" id="menu-btn" type="button">Menu</button>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-label">Start</div>
+        <a href="#home" data-page="home"><span class="num">•</span> Home</a>
+        <a href="#map" data-page="map"><span class="num">•</span> Learning map</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Lessons</div>
+        <a href="#l0" data-page="l0"><span class="num">00</span> Images as numbers</a>
+        <a href="#l1" data-page="l1"><span class="num">01</span> First neural net</a>
+        <a href="#l2" data-page="l2"><span class="num">02</span> Classify with Flatten</a>
+        <a href="#l3" data-page="l3"><span class="num">03</span> MLP vs CNN</a>
+        <a href="#l4" data-page="l4"><span class="num">04</span> How convolution works</a>
+        <a href="#l5" data-page="l5"><span class="num">05</span> Data augmentation</a>
+        <a href="#l6" data-page="l6"><span class="num">06</span> Transfer learning</a>
+        <a href="#l7" data-page="l7"><span class="num">07</span> Embeddings (text analog)</a>
+        <a href="#l8" data-page="l8"><span class="num">08</span> Siamese networks</a>
+        <a href="#l9" data-page="l9"><span class="num">09</span> Face attendance</a>
+        <a href="#l10" data-page="l10"><span class="num">10</span> Medical images</a>
+        <a href="#l11" data-page="l11"><span class="num">11</span> The full recipe</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Reference</div>
+        <a href="#glossary" data-page="glossary"><span class="num">•</span> Glossary</a>
+      </div>
+    </nav>
+    <div class="progress-box">
+      <div id="progress-text">0 / 12 lessons marked done</div>
+      <div class="progress-bar"><span id="progress-fill"></span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+<!-- HOME -->
+<section class="page" id="page-home">
+  <div class="kicker">Your practicals, in order</div>
+  <h1>Computer vision, from the first neuron to a working face system</h1>
+  <p class="lede">This site turns the notebooks in this folder into one path. Each lesson explains the idea in plain language, then shows the exact practical you already have, then lets you poke at it with a small interactive demo.</p>
+
+  <div class="callout">
+    <h3>How to use this</h3>
+    <p>Read in order. Do the lab. Take the quiz. Mark the lesson done. The map page shows <em>why</em> this order exists — it is not the order the files were named.</p>
+  </div>
+
+  <h2>What is in your folder</h2>
+  <p>Your files are a real course arc, plus two extras. Three Fashion-MNIST notebooks are copies of each other. Two transfer-learning notebooks are also copies.</p>
+  <table>
+    <thead><tr><th>File</th><th>What it actually teaches</th></tr></thead>
+    <tbody>
+      <tr><td><code>Deep_Neural_Network (1).ipynb</code></td><td>Keras loop on a table (diabetes). No images yet.</td></tr>
+      <tr><td><code>Deep_Learning_Image_Classification (1)(2)(3)</code></td><td>Same notebook three times: Fashion-MNIST with Flatten + Dense.</td></tr>
+      <tr><td><code>01_Hand_written_Character_Recognition</code></td><td>MNIST twice: MLP, then the first real CNN.</td></tr>
+      <tr><td><code>data_augmentation_comparison.ipynb</code></td><td>CIFAR-10 A/B test: same CNN, with vs without augmentation.</td></tr>
+      <tr><td><code>transfer_learning_tf.ipynb</code> (= <code>_tfh</code>)</td><td>Flowers + MobileNetV2, two-phase training, Grad-CAM.</td></tr>
+      <tr><td><code>02_imdb_moview_review_classification_tf_hub.ipynb</code></td><td>Not vision. Same idea: reuse a pretrained encoder.</td></tr>
+      <tr><td><code>siamese_network_tutorial.ipynb</code></td><td>Face verification by distance, not by class names.</td></tr>
+      <tr><td><code>Face_Recognition_Based_Attendance.ipynb</code></td><td>Detect → embed → match. No training.</td></tr>
+      <tr><td><code>Colab_Eye_Disease_Prediction.ipynb.html</code></td><td>Medical preprocess (cut off before training).</td></tr>
+      <tr><td><code>Defense_Multi_Agent_LLM_fast.ipynb</code></td><td>Not CV. Optional “systems around models” note at the end.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The one loop every training notebook repeats</h2>
+  <ol class="steps">
+    <li>Load data and look at it (shapes, a few samples, class counts).</li>
+    <li>Scale / encode / reshape so the model can digest it.</li>
+    <li>Build layers (<code>Sequential</code> or Functional API).</li>
+    <li><code>compile</code> — pick loss, optimizer, metric.</li>
+    <li><code>fit</code> — epochs, batch size, validation.</li>
+    <li><code>evaluate</code> on held-out data, then <code>predict</code>.</li>
+  </ol>
+  <p>Once that loop is in your bones, CNNs, augmentation, and transfer learning are just better versions of steps 2 and 3.</p>
+
+  <div class="pager">
+    <span></span>
+    <a class="btn primary" href="#map" data-page="map">See the learning map</a>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="page" id="page-map">
+  <div class="kicker">Alignment</div>
+  <h1>How the pieces fit</h1>
+  <p class="lede">Do not start with face recognition. That notebook uses models someone else already trained. Start where your course started: a table of numbers, then pixels, then filters, then reuse, then compare faces.</p>
+
+  <ul class="map-track">
+    <li><a href="#l0" data-page="l0"><h3>00 · Images are grids of numbers</h3><p>Pixels, channels, shapes, and the difference between classify / detect / recognize.</p><div class="src">Foundation — not one notebook, needed by all of them</div></a></li>
+    <li><a href="#l1" data-page="l1"><h3>01 · A neural net with no pictures</h3><p>Sequential, Dense, ReLU, sigmoid, Adam, epochs. Get the Keras verbs right.</p><div class="src">Deep_Neural_Network (1).ipynb</div></a></li>
+    <li><a href="#l2" data-page="l2"><h3>02 · Treat an image as a long list</h3><p>Fashion-MNIST, /255, Flatten, softmax. Fast, but it throws the grid away.</p><div class="src">Deep_Learning_Image_Classification (1)(2)(3) — identical copies</div></a></li>
+    <li><a href="#l3" data-page="l3"><h3>03 · Same digits, two models</h3><p>MNIST MLP vs CNN. One-hot, validation curves, 4D reshape. CNN wins (99% vs 97%).</p><div class="src">01_Hand_written_Character_Recognition (2).ipynb</div></a></li>
+    <li><a href="#l4" data-page="l4"><h3>04 · What a filter actually does</h3><p>Convolution, padding, stride, pooling, dropout. The missing theory behind the CNN cells.</p><div class="src">Theory that the MNIST CNN assumes</div></a></li>
+    <li><a href="#l5" data-page="l5"><h3>05 · Make more training images</h3><p>Same CNN twice on CIFAR-10. Augmentation shrinks the train–test gap.</p><div class="src">data_augmentation_comparison.ipynb</div></a></li>
+    <li><a href="#l6" data-page="l6"><h3>06 · Do not train ImageNet from scratch</h3><p>Freeze MobileNetV2, train a head, then fine-tune slowly. Flowers, callbacks, Grad-CAM.</p><div class="src">transfer_learning_tf.ipynb (same as transfer_learning_tfh.ipynb)</div></a></li>
+    <li><a href="#l7" data-page="l7"><h3>07 · Transfer learning without pixels</h3><p>TF Hub turns a sentence into a vector — the same reuse idea as MobileNet.</p><div class="src">02_imdb_moview_review_classification_tf_hub.ipynb</div></a></li>
+    <li><a href="#l8" data-page="l8"><h3>08 · “Are these the same person?”</h3><p>Shared encoder, contrastive loss, one-shot matching. Classes are the wrong tool here.</p><div class="src">siamese_network_tutorial.ipynb</div></a></li>
+    <li><a href="#l9" data-page="l9"><h3>09 · Ship a recognizer</h3><p>SSD finds the face, ArcFace embeds it, cosine distance decides. You do not train.</p><div class="src">Face_Recognition_Based_Attendance.ipynb</div></a></li>
+    <li><a href="#l10" data-page="l10"><h3>10 · Harder images: eyes</h3><p>Ordinal grades, imbalance, Ben Graham preprocess. Accuracy is a bad headline.</p><div class="src">Colab_Eye_Disease_Prediction.ipynb.html (prep only)</div></a></li>
+    <li><a href="#l11" data-page="l11"><h3>11 · Put the recipe together</h3><p>Which method to pick, which loss to compile, and a checklist for every new dataset.</p><div class="src">All files</div></a></li>
+  </ul>
+
+  <h2>Two kinds of computer vision in this folder</h2>
+  <div class="compare">
+    <div class="mini">
+      <h4>Closed-set classification</h4>
+      <p>There is a fixed list of labels. The last layer is softmax (or sigmoid). Fashion-MNIST, MNIST, CIFAR, flowers, eye disease.</p>
+    </div>
+    <div class="mini">
+      <h4>Open comparison</h4>
+      <p>People (or objects) you never trained as classes. You learn or reuse an embedding, then compare distances. Siamese + attendance.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <h3>Duplicates, so you do not study twice</h3>
+    <p><code>Deep_Learning_Image_Classification (1)</code>, <code>(2)</code>, and <code>(3)</code> are the same notebook. <code>transfer_learning_tf.ipynb</code> and <code>transfer_learning_tfh.ipynb</code> are the same notebook — the second does <em>not</em> use TF Hub. Hub is only in the IMDB file.</p>
+  </div>
+
+  <div class="pager">
+    <a class="btn" href="#home" data-page="home">Back</a>
+    <a class="btn primary" href="#l0" data-page="l0">Start lesson 00</a>
+  </div>
+</section>
+
+<!-- L0 -->
+<section class="page" id="page-l0">
+  <div class="kicker">Lesson 00 · Foundation</div>
+  <h1>Images are just numbers in a grid</h1>
+  <p class="lede">A camera does not give a computer a “shoe” or a “face”. It gives a table of brightness values. Every later notebook is doing arithmetic on that table.</p>
+  <div class="toc-mini">
+    <a href="#l0-pixel">Pixel</a>
+    <a href="#l0-shape">Shape</a>
+    <a href="#l0-tasks">Tasks</a>
+    <a href="#l0-data">Datasets</a>
+  </div>
+
+  <h2 id="l0-pixel">A pixel</h2>
+  <p>In these practicals, a grayscale pixel is an integer from <strong>0 (black)</strong> to <strong>255 (white)</strong>. The first Fashion-MNIST comment says “RGB 0–255”. That comment is wrong: Fashion-MNIST and MNIST are one channel, not three.</p>
+  <p>Color (flowers, CIFAR, fundus photos, webcam faces) has three channels: red, green, blue. Same idea, three grids stacked.</p>
+
+  <div class="lab">
+    <h3>Lab · normalize a pixel</h3>
+    <div id="lab-norm"></div>
+  </div>
+  <p>Why divide by 255? Neural nets like small numbers. Huge raw pixels (0–255) make early gradients noisy. MNIST uses <code>/ 255</code> → range 0 to 1. MobileNetV2 and ArcFace use a different scale, about −1 to 1. <strong>The preprocess must match the model.</strong> Mixing them silently ruins accuracy.</p>
+
+  <h2 id="l0-shape">Shape is a contract</h2>
+  <table>
+    <thead><tr><th>What you have</th><th>Typical shape</th><th>Where you see it</th></tr></thead>
+    <tbody>
+      <tr><td>One gray 28×28 image</td><td><code>(28, 28)</code></td><td>MNIST / Fashion-MNIST before CNN</td></tr>
+      <tr><td>Batch of those</td><td><code>(60000, 28, 28)</code></td><td>After <code>load_data()</code></td></tr>
+      <tr><td>Same, for a CNN</td><td><code>(60000, 28, 28, 1)</code></td><td>After <code>reshape(..., 1)</code></td></tr>
+      <tr><td>Color photo for MobileNet</td><td><code>(224, 224, 3)</code></td><td>Flowers transfer learning</td></tr>
+      <tr><td>CIFAR-10 image</td><td><code>(3, 32, 32)</code> in PyTorch</td><td>Channels-first by default</td></tr>
+    </tbody>
+  </table>
+  <p>Keras Conv2D wants <code>(samples, height, width, channels)</code>. PyTorch often uses <code>(samples, channels, height, width)</code>. That is why the same idea looks like different numbers in two notebooks.</p>
+
+  <h2 id="l0-tasks">Four jobs people mix up</h2>
+  <div class="grid-2">
+    <div class="mini"><h4>Classification</h4><p>Assign one label from a list. “This is a 7.” “This is a tulip.” Most of your course.</p></div>
+    <div class="mini"><h4>Detection</h4><p>Find <em>where</em>. The attendance notebook’s SSD draws a box around a face. It does not know the name.</p></div>
+    <div class="mini"><h4>Recognition / verification</h4><p>Ask <em>who</em>, or “same person?”. Siamese + ArcFace.</p></div>
+    <div class="mini"><h4>Not in these files</h4><p>Segmentation (label every pixel), object tracking, 3D. You do not need them for this course.</p></div>
+  </div>
+
+  <h2 id="l0-data">The datasets you will actually touch</h2>
+  <table>
+    <thead><tr><th>Dataset</th><th>Size / type</th><th>Lesson</th></tr></thead>
+    <tbody>
+      <tr><td>Pima diabetes CSV</td><td>768 rows × 8 numbers</td><td>01</td></tr>
+      <tr><td>Fashion-MNIST</td><td>70k gray 28×28 clothes</td><td>02</td></tr>
+      <tr><td>MNIST digits</td><td>70k gray 28×28 digits</td><td>03</td></tr>
+      <tr><td>CIFAR-10</td><td>60k color 32×32 objects</td><td>05</td></tr>
+      <tr><td>Kaggle flowers</td><td>~4.3k photos, 5 classes</td><td>06</td></tr>
+      <tr><td>IMDB reviews</td><td>Text, not images</td><td>07</td></tr>
+      <tr><td>AT&amp;T / ORL faces</td><td>400 gray faces, 40 people</td><td>08</td></tr>
+      <tr><td>Your own gallery</td><td>Named photos + webcam</td><td>09</td></tr>
+      <tr><td>APTOS-style fundus</td><td>~3.6k retina photos, 5 grades</td><td>10</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l0"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#map" data-page="map">Map</a>
+    <button class="btn primary" data-mark="l0">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L1 -->
+<section class="page" id="page-l1">
+  <div class="kicker">Lesson 01 · Deep_Neural_Network (1).ipynb</div>
+  <h1>A neural net before any images</h1>
+  <p class="lede">This practical is not computer vision. That is the point. It teaches the Keras verbs on a small table so later notebooks can reuse them on pixels.</p>
+  <div class="from-file">From the notebook: 768 people, 8 medical numbers, one yes/no label called <code>Outcome</code>.</div>
+
+  <h2>What a Dense layer does</h2>
+  <p>A <strong>neuron</strong> takes inputs, multiplies each by a <strong>weight</strong>, adds a <strong>bias</strong>, then applies an <strong>activation</strong>.</p>
+  <div class="formula">z = w1·x1 + w2·x2 + … + b &nbsp;&nbsp; then &nbsp;&nbsp; y = activation(z)</div>
+  <p><strong>Dense</strong> means every neuron in this layer sees every value from the previous layer. Fully connected. Easy to understand. Bad for raw images later, because it ignores that nearby pixels belong together.</p>
+  <p><strong>Sequential</strong> means you stack layers in a line. Data flows left → right. The diabetes model is only Dense layers.</p>
+
+  <div class="lab">
+    <h3>Lab · one neuron</h3>
+    <div id="lab-neuron"></div>
+  </div>
+
+  <h2>Activations in this notebook</h2>
+  <div class="compare">
+    <div class="mini">
+      <h4>ReLU on hidden layers</h4>
+      <p><code>max(0, z)</code>. If the weighted sum is negative, the neuron stays quiet. If positive, it passes the number through. Default choice for hidden layers in every notebook here.</p>
+    </div>
+    <div class="mini">
+      <h4>Sigmoid on the last layer</h4>
+      <p>Squishes one number into a probability between 0 and 1. Perfect for diabetes yes/no. Not for 10 clothing classes — those need softmax (next lesson).</p>
+    </div>
+  </div>
+
+  <h2>The architecture they built</h2>
+  <div class="arch">
+    <div class="arch-box">8 inputs (pregnancies, glucose, BMI, …)</div>
+    <div class="arch-arrow">↓ Dense 12, ReLU</div>
+    <div class="arch-box">hidden</div>
+    <div class="arch-arrow">↓ Dense 20, ReLU</div>
+    <div class="arch-box">hidden</div>
+    <div class="arch-arrow">↓ Dense 20, ReLU</div>
+    <div class="arch-box">hidden</div>
+    <div class="arch-arrow">↓ Dense 22, ReLU</div>
+    <div class="arch-box">hidden</div>
+    <div class="arch-arrow">↓ Dense 1, sigmoid</div>
+    <div class="arch-box out">P(diabetes) between 0 and 1</div>
+  </div>
+
+  <h2>Compile, fit, evaluate</h2>
+  <p>The comment says this is “configuring back-propagation”. Close enough: <code>compile</code> chooses how errors become weight updates.</p>
+<pre><code>model.compile(
+    loss='binary_crossentropy',  # yes/no probability
+    optimizer='adam',            # adaptive step sizes
+    metrics=['accuracy']
+)
+model.fit(X_train, y_train, epochs=100, batch_size=10)
+scores = model.evaluate(X_test, y_test)
+model.predict(X_test[11:22])     # probabilities, not 0/1</code></pre>
+  <ul>
+    <li><strong>Loss</strong> is the number training tries to shrink. Binary crossentropy punishes confident wrong yes/no answers.</li>
+    <li><strong>Adam</strong> is the optimizer. You do not write the gradient loop yourself.</li>
+    <li><strong>Epoch</strong> = one full pass over the training rows. They used 100.</li>
+    <li><strong>Batch size</strong> = how many rows per weight update. They used 10. Smaller batches = more updates per epoch, noisier steps.</li>
+    <li><strong>Accuracy</strong> = fraction of correct 0/1 guesses (after thresholding 0.5). Their test run was about <strong>71%</strong>.</li>
+  </ul>
+
+  <h2>Train / test split</h2>
+  <p><code>train_test_split(..., test_size=0.2)</code> keeps 20% of rows unseen. That is the only honest score. There is no validation set here — later MNIST adds <code>validation_split=0.2</code> so you can watch overfitting during training.</p>
+
+  <div class="callout warn">
+    <h3>Mistakes this notebook leaves in</h3>
+    <ul>
+      <li>Features are not scaled. Glucose is ~0–200, pedigree is ~0–2. Always scale tables in real work (<code>StandardScaler</code>).</li>
+      <li>Zeros in Insulin / SkinThickness are often missing values, not true zeros.</li>
+      <li>No <code>random_state</code> — the split changes every run.</li>
+      <li>Printing <code>loss * 100</code> looks like a percent. Loss is not a percent.</li>
+      <li><code>predict</code> returns probabilities. You still choose a threshold (usually 0.5).</li>
+    </ul>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l1"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l0" data-page="l0">Previous</a>
+    <button class="btn primary" data-mark="l1">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L2 -->
+<section class="page" id="page-l2">
+  <div class="kicker">Lesson 02 · Deep_Learning_Image_Classification</div>
+  <h1>First images: flatten and classify</h1>
+  <p class="lede">Same Keras loop as diabetes, now on 28×28 clothing photos. This is still <em>not</em> a CNN. It is a fully connected net that first destroys the 2D layout.</p>
+  <div class="from-file">Files (1), (2), and (3) are identical. Study one. Dataset: Fashion-MNIST, 60,000 train + 10,000 test, 10 classes.</div>
+
+  <h2>Look before you train</h2>
+<pre><code>(X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
+X_train.shape   # (60000, 28, 28)
+plt.matshow(X_train[0])
+y_train[0]      # 9 → Ankle boot
+X_train = X_train / 255
+X_test  = X_test  / 255</code></pre>
+  <p>Class names used in the notebook:</p>
+  <p><code>T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, Ankle boot</code></p>
+
+  <h2>Flatten throws the grid away</h2>
+  <p>A 28×28 photo becomes a list of 784 numbers. Neighbor pixels in the picture are no longer neighbors in that list. The model can still work — humans can classify a shuffled-looking vector less easily than a picture, but a Dense net does not “see” edges as edges. That is why the next lesson introduces convolution.</p>
+  <p>The notebook comment “flatten into one single value” is wrong. Flatten makes a <strong>784-vector</strong>, not one number.</p>
+
+  <div class="arch">
+    <div class="arch-box">Input 28×28</div>
+    <div class="arch-arrow">↓ Flatten → 784</div>
+    <div class="arch-box">Dense 100, ReLU</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box">Dense 50, ReLU</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box out">Dense 10, softmax · 84,060 parameters</div>
+  </div>
+
+  <h2>Softmax and argmax</h2>
+  <p>The last layer outputs 10 scores. <strong>Softmax</strong> turns them into 10 probabilities that add to 1. <strong>argmax</strong> picks the biggest one — that is the predicted class. The notebook does exactly this on test image 8252 (comments wrongly say “1250th”).</p>
+  <div class="lab">
+    <h3>Lab · softmax</h3>
+    <div id="lab-softmax"></div>
+  </div>
+
+  <h2>Why sparse_categorical_crossentropy</h2>
+  <p>Labels are integers 0–9, not one-hot vectors. Sparse categorical crossentropy is the loss that matches integer labels + softmax. If you first call <code>to_categorical</code> (MNIST notebook), you switch to <code>categorical_crossentropy</code>. Mixing those two is a classic silent disaster.</p>
+<pre><code>model.compile(
+    loss="sparse_categorical_crossentropy",
+    optimizer="adam",
+    metrics=["accuracy"]
+)
+model.fit(X_train, y_train, epochs=10)  # batch 32 by default
+# their run: train ~91%, test ~88%</code></pre>
+  <p>That small gap is mild overfitting: the model is a bit better on pictures it already saw.</p>
+
+  <div class="callout ok">
+    <h3>What you should take from this practical</h3>
+    <p>You can classify images with Flatten + Dense. It works on tiny grayscale icons. It will not be the right tool for flowers, faces, or medical photos. The next notebook proves that by beating an MLP with a CNN on the same kind of 28×28 data.</p>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l2"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l1" data-page="l1">Previous</a>
+    <button class="btn primary" data-mark="l2">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L3 -->
+<section class="page" id="page-l3">
+  <div class="kicker">Lesson 03 · 01_Hand_written_Character_Recognition</div>
+  <h1>Same digits, two brains: MLP then CNN</h1>
+  <p class="lede">This is the most important beginner notebook in the folder. It does MNIST twice so you can feel why convolution exists. (The title says “character”; the data is digits 0–9.)</p>
+
+  <h2>Part A — MLP, with extra honesty</h2>
+  <p>Compared with Fashion-MNIST, three new habits appear:</p>
+  <ol class="steps">
+    <li>One-hot labels with <code>to_categorical(y, 10)</code> so class 6 becomes <code>[0,0,0,0,0,0,1,0,0,0]</code>.</li>
+    <li><code>validation_split=0.2</code> — last 20% of training is watched every epoch.</li>
+    <li>Plot <code>history.history</code> accuracy and loss for train vs val. When train keeps improving and val gets worse, that is overfitting.</li>
+  </ol>
+  <div class="lab">
+    <h3>Lab · one-hot</h3>
+    <div id="lab-onehot"></div>
+  </div>
+  <div class="arch">
+    <div class="arch-box">Flatten 28×28 → 784</div>
+    <div class="arch-arrow">↓ Dense 128 ReLU → Dense 64 ReLU</div>
+    <div class="arch-box out">Dense 10 softmax · 109,386 params · test acc ~97.5%</div>
+  </div>
+  <p>Their curves: train accuracy up to ~99.4%, val around 97%. The MLP is memorizing a bit.</p>
+
+  <h2>Part B — reshape for Conv2D</h2>
+  <p>The notebook’s markdown cell is the key teaching text. CNNs want 4D tensors:</p>
+  <div class="formula">(samples, height, width, channels)</div>
+<pre><code>X_train = X_train.reshape(-1, 28, 28, 1)
+# -1 = “figure out 60000 for me”
+# 1  = grayscale still needs an explicit channel</code></pre>
+  <p>Skip this and Keras raises: input incompatible with Conv2D. Color would be <code>3</code> instead of <code>1</code>.</p>
+  <p>They reload MNIST before the CNN because Part A already overwrote <code>y_train</code> with one-hot vectors.</p>
+
+  <h2>The CNN they trained</h2>
+  <div class="arch">
+    <div class="arch-box">Input 28×28×1</div>
+    <div class="arch-arrow">↓ Conv2D 32 filters, 3×3, ReLU (valid padding) → 26×26×32</div>
+    <div class="arch-box">MaxPooling 2×2 → 13×13×32</div>
+    <div class="arch-arrow">↓ Conv2D 64 filters, 3×3, ReLU → 11×11×64</div>
+    <div class="arch-box">MaxPooling 2×2 → 5×5×64</div>
+    <div class="arch-arrow">↓ Flatten → 1600</div>
+    <div class="arch-box">Dense 128 ReLU · Dropout 0.5</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box out">Dense 10 softmax · 225,034 params · test acc ~99.1%</div>
+  </div>
+<pre><code>model.add(Conv2D(32, kernel_size=(3,3), activation='relu',
+                 input_shape=(28,28,1)))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(64, kernel_size=(3,3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(10, activation='softmax'))
+model.compile(optimizer=Adam(learning_rate=0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(..., epochs=10, batch_size=128, validation_split=0.2)</code></pre>
+  <p>When predicting one image, keep the batch dimension: <code>X_test[5334:5335]</code> has shape <code>(1, 28, 28, 1)</code>. A single <code>X_test[5334]</code> is 3D and will fail.</p>
+
+  <div class="compare">
+    <div class="mini"><h4>MLP on MNIST</h4><p>Batch 32, ~97.5% test, overfits more, ignores spatial layout.</p></div>
+    <div class="mini"><h4>CNN on MNIST</h4><p>Batch 128, ~99.1% test, dropout, sees local patterns. Same 10 epochs.</p></div>
+  </div>
+
+  <div class="lab">
+    <h3>Lab · dropout</h3>
+    <div id="lab-dropout"></div>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l3"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l2" data-page="l2">Previous</a>
+    <button class="btn primary" data-mark="l3">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L4 -->
+<section class="page" id="page-l4">
+  <div class="kicker">Lesson 04 · Theory behind the CNN cells</div>
+  <h1>How convolution actually works</h1>
+  <p class="lede">The handwritten notebook uses Conv2D and MaxPool without deriving them. This lesson is that derivation, in the same numbers those cells use.</p>
+
+  <h2>A filter is a tiny shared pattern-detector</h2>
+  <p>A 3×3 <strong>kernel</strong> (filter) slides over the image. At each stop it multiplies overlapping pixels by its 9 weights and adds them up. That one number goes into a <strong>feature map</strong>.</p>
+  <p>Early filters learn edges and textures. Deeper filters learn parts (loops of an 8, petals, an eye). You do not draw the filters. Training writes them.</p>
+  <p>Two reasons this beats Flatten + Dense:</p>
+  <ul>
+    <li><strong>Local connectivity</strong> — a neuron only looks at a small neighborhood, which is how images are structured.</li>
+    <li><strong>Weight sharing</strong> — the same 3×3 is reused everywhere, so “vertical edge” is detected in every location with the same 9 weights. Far fewer parameters than a Dense layer on 784 pixels.</li>
+  </ul>
+
+  <div class="lab">
+    <h3>Lab · 5×5 image, 3×3 kernel</h3>
+    <div id="lab-conv"></div>
+  </div>
+
+  <h2>Padding and stride</h2>
+  <p><strong>Stride</strong> is how many pixels the kernel jumps. Stride 1 = dense scan. Stride 2 = skip every other location, map shrinks faster.</p>
+  <p><strong>Padding</strong> adds extra pixels (usually zeros) around the border so the kernel can sit on edge pixels too. Keras default is <code>valid</code> (no padding). That is why MNIST goes 28 → 26 with a 3×3 filter: 28 − 3 + 1 = 26. <code>same</code> padding keeps 28 → 28 when stride is 1.</p>
+  <div class="lab">
+    <h3>Lab · output size</h3>
+    <div id="lab-stride"></div>
+  </div>
+  <p>MNIST CNN path, all valid padding, pool stride 2:</p>
+  <p><code>28 → conv 26 → pool 13 → conv 11 → pool 5</code>, then 64 maps → 5×5×64 = 1600 numbers into Dense.</p>
+
+  <h2>Pooling</h2>
+  <p>Max pooling 2×2 with stride 2 keeps the strongest response in each 2×2 block and throws the rest away. Effects: smaller maps (cheaper Dense at the end), a little translation tolerance (“the edge is somewhere in this 2×2”).</p>
+  <div class="lab">
+    <h3>Lab · max pool</h3>
+    <div id="lab-pool"></div>
+  </div>
+
+  <h2>Many filters = depth</h2>
+  <p>One 3×3 kernel makes one feature map. <code>Conv2D(32, …)</code> is 32 different kernels, so 32 maps stacked as channels. The next conv looks across those 32 channels at once. That is why the second MNIST conv has more parameters: each of 64 new filters sees a 3×3×32 patch.</p>
+  <div class="formula">params = (kernel_h × kernel_w × in_channels × out_channels) + out_channels (bias)</div>
+  <p>First MNIST conv: (3×3×1×32)+32 = <strong>320</strong>. Second: (3×3×32×64)+64 = <strong>18,496</strong>.</p>
+
+  <div class="callout">
+    <h3>Receptive field, in one sentence</h3>
+    <p>After two 3×3 convs and two 2×2 pools, each number in the 5×5 map “sees” a much larger patch of the original 28×28 digit. That is how a CNN goes from local edges to a whole handwritten 4.</p>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l4"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l3" data-page="l3">Previous</a>
+    <button class="btn primary" data-mark="l4">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L5 -->
+<section class="page" id="page-l5">
+  <div class="kicker">Lesson 05 · data_augmentation_comparison.ipynb</div>
+  <h1>Teach the model the same object, slightly wrong</h1>
+  <p class="lede">CIFAR-10 is 32×32 color photos (airplane, cat, truck, …). The notebook trains <em>the same CNN twice</em>. Only the training transforms change. That isolates what augmentation is worth.</p>
+  <div class="from-file">Framework: PyTorch, not Keras. Same ideas: conv blocks, ReLU, pooling, dropout, cross-entropy, Adam-style optimizer.</div>
+
+  <h2>What augmentation is</h2>
+  <p>You do not invent new labeled photos. You warp the ones you have: flip, crop, jitter color, small rotate. A flipped cat is still a cat. The model sees more variety and memorizes exact pixels less.</p>
+  <p><strong>Never augment the test (or validation) set</strong> if you want an honest score. The notebook’s test loader is normalize-only.</p>
+
+  <h2>What they applied</h2>
+  <table>
+    <thead><tr><th>Transform</th><th>Why it is fair on CIFAR</th></tr></thead>
+    <tbody>
+      <tr><td>RandomHorizontalFlip</td><td>A car facing left is still a car.</td></tr>
+      <tr><td>RandomCrop(32, padding=4)</td><td>Classic CIFAR recipe: pad then crop, like a small shift.</td></tr>
+      <tr><td>ColorJitter</td><td>Lighting changes should not change the class.</td></tr>
+      <tr><td>Small rotation</td><td>Slight camera tilt.</td></tr>
+      <tr><td>Normalize with CIFAR mean/std</td><td>Not /255. Dataset-specific centering. Always denormalize before plotting.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn">
+    <h3>Do not blindly flip digits</h3>
+    <p>A horizontal flip of MNIST 2 is still a 2. A 180° rotation can turn 6 into 9. Augmentation must preserve the label. Fashion shirts can flip; medical laterality sometimes cannot.</p>
+  </div>
+
+  <h2>The CNN (same for both runs)</h2>
+  <p>Three conv blocks (two 3×3 conv+BatchNorm+ReLU, then max pool), then global average pool, Dense 512, Dropout 0.3, 10 logits. Loss is <code>CrossEntropyLoss</code> on integer labels — PyTorch applies log-softmax inside the loss, so the last layer is <em>not</em> softmax.</p>
+  <p>Optimizer: AdamW, cosine annealing over 30 epochs. That slowly lowers the learning rate. Different stack, same training story as Keras <code>fit</code>.</p>
+
+  <h2>How to read the experiment</h2>
+  <ul>
+    <li>The augmented model’s <strong>train</strong> accuracy rises slower (training is harder).</li>
+    <li>Its <strong>test</strong> accuracy ends higher.</li>
+    <li>The gap <code>train_acc − test_acc</code> shrinks. That gap is a simple overfitting score.</li>
+  </ul>
+  <p>Keras version of the same idea: the flowers notebook’s <code>ImageDataGenerator</code> (flip, rotation 20°, shift, zoom, shear, brightness) applied to <em>train only</em>.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l5"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l4" data-page="l4">Previous</a>
+    <button class="btn primary" data-mark="l5">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L6 -->
+<section class="page" id="page-l6">
+  <div class="kicker">Lesson 06 · transfer_learning_tf.ipynb</div>
+  <h1>Borrow a brain that already saw a million photos</h1>
+  <p class="lede">You have ~4,300 flower photos and five classes. Training a huge CNN from random weights will overfit. ImageNet already taught MobileNetV2 edges, textures, and object parts. You reuse that.</p>
+  <div class="from-file"><code>transfer_learning_tfh.ipynb</code> is the same file. It does not use TF Hub. Dataset: Kaggle <code>alxmamaev/flowers-recognition</code> — daisy, dandelion, rose, sunflower, tulip. Split 70 / 15 / 15.</div>
+
+  <h2>Transfer learning in two phases</h2>
+  <div class="compare">
+    <div class="mini">
+      <h4>Phase 1 · feature extraction</h4>
+      <p>Freeze the MobileNetV2 backbone. Train only a small new head. Fast. Safe. Learning rate ~1e-3.</p>
+    </div>
+    <div class="mini">
+      <h4>Phase 2 · fine-tuning</h4>
+      <p>Unfreeze the <em>last 30</em> backbone layers. Train them + the head with a tiny LR (~1e-5) so you do not erase ImageNet features (<strong>catastrophic forgetting</strong>).</p>
+    </div>
+  </div>
+  <p><code>include_top=False</code> throws away ImageNet’s 1000-class classifier. You keep the visual trunk and attach your 5-class head.</p>
+
+  <div class="arch">
+    <div class="arch-box">Input 224×224×3</div>
+    <div class="arch-arrow">↓ MobileNetV2 ImageNet weights, include_top=False</div>
+    <div class="arch-box wide">GlobalAveragePooling2D → BatchNorm → Dense 256 → Dropout 0.3 → Dense 128 → Dropout 0.2</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box out">Dense 5, softmax</div>
+  </div>
+  <p><strong>Global Average Pooling</strong> turns a stack of feature maps into one number per channel. No giant Flatten. Fewer parameters, harder to overfit.</p>
+
+  <h2>The preprocess trap</h2>
+  <p>MobileNetV2 expects <code>preprocess_input</code>, which scales roughly to <strong>[−1, 1]</strong>. Using <code>/255</code> from the MNIST notebooks here will look like it “runs” and still be wrong. Val/test generators use preprocess only — no augmentation.</p>
+  <p>Call the backbone with <code>training=False</code> so BatchNorm keeps its ImageNet running statistics. If those stats update on a small flower set, the features can collapse. Official TensorFlow transfer-learning guidance is exactly this.</p>
+
+  <h2>Callbacks — stop being a hero</h2>
+  <table>
+    <thead><tr><th>Callback</th><th>Job</th></tr></thead>
+    <tbody>
+      <tr><td>EarlyStopping (<code>restore_best_weights</code>)</td><td>Quit when val stops improving; snap back to the best epoch, not the last.</td></tr>
+      <tr><td>ReduceLROnPlateau</td><td>If val stalls, cut LR in half.</td></tr>
+      <tr><td>ModelCheckpoint</td><td>Save the best weights to disk.</td></tr>
+      <tr><td>TensorBoard / CSVLogger</td><td>Look at curves later.</td></tr>
+    </tbody>
+  </table>
+  <p>Recompile before Phase 2. A fresh Adam at 1e-5 should not carry Phase-1 momentum into the unfrozen layers.</p>
+
+  <h2>Grad-CAM</h2>
+  <p>After training, you want to know <em>where</em> the model looked. Grad-CAM takes the gradient of the predicted class score with respect to the last convolutional feature map and paints a heatmap. For flowers, the blob should sit on the bloom, not the table. For eyes (next medical lesson), it should sit on lesions, not the black border.</p>
+
+  <h2>Evaluate like an adult</h2>
+  <p>Accuracy on five fairly even flower classes is OK as a headline. Still plot a confusion matrix and per-class F1. <code>shuffle=False</code> on the test generator so predictions line up with labels.</p>
+  <p>Their ballpark: after fine-tune, val ~88–92%, test ~88–91%. Far above what a tiny from-scratch CNN would do on 4k photos.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l6"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l5" data-page="l5">Previous</a>
+    <button class="btn primary" data-mark="l6">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L7 -->
+<section class="page" id="page-l7">
+  <div class="kicker">Lesson 07 · 02_imdb_moview_review_classification_tf_hub.ipynb</div>
+  <h1>The same idea, with sentences</h1>
+  <p class="lede">This is not computer vision. Keep it anyway. TF Hub’s text layer is the cousin of MobileNet: a pretrained encoder you drop in as the first layer.</p>
+  <div class="from-file">IMDB reviews, positive vs negative. Hub model: <code>gnews-swivel-20dim</code> — a small 20-D embedding. Filename typo: “moview”.</div>
+
+  <h2>Embedding means “turn messy input into a vector”</h2>
+  <p>A review is a string. The Hub layer maps it to 20 numbers that already carry word-co-occurrence knowledge from Google News. Then a tiny Dense net predicts sentiment.</p>
+  <div class="arch">
+    <div class="arch-box">raw string</div>
+    <div class="arch-arrow">↓ hub.KerasLayer (trainable=True) → 20-D</div>
+    <div class="arch-box">Dense 16 ReLU</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box out">Dense 1 sigmoid · binary_crossentropy</div>
+  </div>
+  <p>Vision analog: image → MobileNet vector → Dense head. NLP analog: text → Hub vector → Dense head. Once you see that rhyme, transfer learning stops being a vision trick and becomes “reuse a pretrained encoder.”</p>
+<pre><code>hub_layer = hub.KerasLayer(
+    "https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1",
+    input_shape=[], dtype=tf.string, trainable=True)
+model = Sequential()
+model.add(hub_layer)
+model.add(Dense(16, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))</code></pre>
+  <p><code>tf.data</code>: <code>dataset.shuffle(10000).batch(512)</code>. Shuffle so the model does not memorize order. Large batch needs more RAM; must be smaller than the dataset.</p>
+
+  <div class="callout warn">
+    <h3>A real bug in the practical — learn from it</h3>
+    <p>They load splits roughly like <code>train[:80%]</code>, <code>train[80%:90%]</code>, and <code>train[20%:]</code> as “test”. Train and “test” overlap. Accuracy will look too good. Honest pattern:</p>
+<pre><code>split=['train[:80%]', 'train[80%:]', 'test']</code></pre>
+    <p>Always check that test examples never appeared in training. The flowers notebook does this properly with a disjoint folder split.</p>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l7"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l6" data-page="l6">Previous</a>
+    <button class="btn primary" data-mark="l7">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L8 -->
+<section class="page" id="page-l8">
+  <div class="kicker">Lesson 08 · siamese_network_tutorial.ipynb</div>
+  <h1>Stop naming people. Learn a distance.</h1>
+  <p class="lede">Softmax over 40 identities fails as soon as person 41 walks in. A Siamese net does not output “Alice / Bob”. It outputs how far two face embeddings are. New people only need a reference photo.</p>
+  <div class="from-file">AT&amp;T / ORL: 40 people × 10 photos, grayscale <code>.pgm</code> 92×112. Pairs: 20 same + 20 different per person (label <strong>0 = same, 1 = different</strong>).</div>
+
+  <h2>Shared weights</h2>
+  <p>Two input photos go through <em>the same</em> CNN encoder. Same weights. If the towers differed, “distance” would be meaningless. The encoder ends in a 128-D vector, L2-normalized (length 1), so Euclidean distance behaves like an angle on a sphere.</p>
+  <div class="arch">
+    <div class="arch-box">Image A 112×92×1 &nbsp;&nbsp; Image B 112×92×1</div>
+    <div class="arch-arrow">↓ same encoder (4 conv blocks → GAP → Dense 128 → L2)</div>
+    <div class="arch-box">embedding A &nbsp;&nbsp; embedding B</div>
+    <div class="arch-arrow">↓ Euclidean distance</div>
+    <div class="arch-box out">one number d · contrastive loss</div>
+  </div>
+
+  <h2>Contrastive loss (Hadsell-style)</h2>
+  <p>This notebook uses y = 0 for the same person and y = 1 for different people. Many tutorials flip that. Copy the formula that matches <em>your</em> labels.</p>
+  <div class="formula">L = ½ [ (1−y) d² + y max(0, margin − d)² ] &nbsp;&nbsp; with margin = 1.0</div>
+  <ul>
+    <li>Same pair (y=0): loss is ½ d². Pull embeddings together.</li>
+    <li>Different pair (y=1): if d already &gt; margin, loss is 0. Otherwise push them apart. No need to send strangers to infinity.</li>
+  </ul>
+  <div class="lab">
+    <h3>Lab · contrastive loss</h3>
+    <div id="lab-contrastive"></div>
+  </div>
+
+  <h2>Verification vs identification vs one-shot</h2>
+  <ul>
+    <li><strong>Verification:</strong> two photos, same person? Threshold on d (they sweep 0–2 on test; slightly optimistic — prefer tuning on val).</li>
+    <li><strong>Identification:</strong> one query vs a gallery, nearest embedding wins.</li>
+    <li><strong>One-shot:</strong> gallery has <em>one</em> photo per person. Softmax classifiers cannot do this without retraining.</li>
+  </ul>
+  <p>They also plot t-SNE (pretty 2D view of clusters — not a metric) and ROC-AUC on pair distances.</p>
+
+  <div class="callout warn">
+    <h3>Optimistic splits</h3>
+    <p>Pair-level train/test still lets the same person appear on both sides. For a true one-shot test you hold out <em>subjects</em>, not just pairs. Tiny 400-image sets also memorize easily without augmentation.</p>
+  </div>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l8"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l7" data-page="l7">Previous</a>
+    <button class="btn primary" data-mark="l8">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L9 -->
+<section class="page" id="page-l9">
+  <div class="kicker">Lesson 09 · Face_Recognition_Based_Attendance.ipynb</div>
+  <h1>You often do not train. You engineer a pipeline.</h1>
+  <p class="lede">Siamese taught the idea of embeddings. This notebook downloads a stronger pretrained one (ArcFace) and a face detector, then logs names to CSV. Production CV is frequently this: glue, thresholds, and a UI.</p>
+
+  <h2>Detection is not recognition</h2>
+  <ol class="steps">
+    <li><strong>Detect</strong> — OpenCV Res10 SSD (300×300) finds a box. Confidence default 0.80, min face 80 px, keep the largest face.</li>
+    <li><strong>Crop</strong> — pad 8% so you do not cut ears/chin, resize to 112×112 RGB.</li>
+    <li><strong>Embed</strong> — ArcFace ONNX, preprocess <code>(x − 127.5) / 128</code>, output 512-D, L2-normalize.</li>
+    <li><strong>Match</strong> — cosine distance to enrolled gallery. Accept if distance &lt; 0.40.</li>
+    <li><strong>Log</strong> — one attendance row per person per day.</li>
+  </ol>
+  <p>Enrollment photos live in <code>known_Faces/</code> with names like <code>1234_JohnDoe.jpg</code>. Extra underscores in the name will split wrong — the notebook documents that quirk.</p>
+
+  <h2>Cosine on the unit sphere</h2>
+  <p>After L2-normalization, cosine similarity is just the dot product. Distance = 1 − similarity. Lower threshold = stricter (fewer false accepts, more “unknown”).</p>
+  <div class="lab">
+    <h3>Lab · cosine match</h3>
+    <div id="lab-cosine"></div>
+  </div>
+
+  <h2>Why ONNX</h2>
+  <p>ONNX Runtime runs a trained model without bringing PyTorch or TensorFlow into the attendance app. Layout matters: this ArcFace is NHWC <code>(1, 112, 112, 3)</code>. Many face models are NCHW. Wrong layout → garbage embeddings that still look like 512 numbers.</p>
+
+  <div class="callout warn">
+    <h3>Limits you should say out loud</h3>
+    <ul>
+      <li>No liveness check — a printed photo can pass.</li>
+      <li>SSD is old; profile, mask, hard light will miss faces.</li>
+      <li>Threshold 0.40 is a default, not calibrated FAR/FRR on your camera.</li>
+      <li>Face embeddings are biometric data. You need consent and a retention policy. This is a class demo, not a workplace system.</li>
+    </ul>
+  </div>
+  <p>The notebook also writes a Streamlit <code>app.py</code> (upload or camera). Same wrapping pattern as the multi-agent extra: notebook → small web app.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l9"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l8" data-page="l8">Previous</a>
+    <button class="btn primary" data-mark="l9">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L10 -->
+<section class="page" id="page-l10">
+  <div class="kicker">Lesson 10 · Colab_Eye_Disease_Prediction</div>
+  <h1>When the photo is a medical test</h1>
+  <p class="lede">Diabetic retinopathy (DR) is graded from fundus photographs. Your HTML export stops after data prep — the training cells were never saved. The intended story is still clear from imports: transfer learning on a 5-grade, badly imbalanced medical set.</p>
+  <div class="from-file">Kaggle <code>sovitrath/diabetic-retinopathy-224x224-2019-data</code> (APTOS-style, 224×224). Config in the file: batch 32, 30 epochs, LR 1e-4, dropout 0.3. Imports: EfficientNetB3, ResNet50, DenseNet121, class weights, Cohen’s kappa.</div>
+
+  <h2>Ordinal classes, not cats vs dogs</h2>
+  <table>
+    <thead><tr><th>Grade</th><th>Meaning</th><th>Counts in the export</th></tr></thead>
+    <tbody>
+      <tr><td>0 No DR</td><td>Healthy</td><td>1805 (53.6%)</td></tr>
+      <tr><td>1 Mild</td><td>Early signs</td><td>370</td></tr>
+      <tr><td>2 Moderate</td><td></td><td>999</td></tr>
+      <tr><td>3 Severe</td><td></td><td>193 (5.7%)</td></tr>
+      <tr><td>4 Proliferative</td><td>Most serious</td><td>295 on disk, then dropped by a typo</td></tr>
+    </tbody>
+  </table>
+  <p>A model that always says “No DR” is ~54% accurate and useless. Use <strong>class weights</strong>, macro F1, and especially <strong>quadratic weighted kappa</strong> (APTOS metric): being off by one grade hurts less than calling proliferative “healthy”.</p>
+
+  <div class="callout warn">
+    <h3>Label-mapping landmine</h3>
+    <p>The folder is named <code>Proliferate_DR</code>. The map used <code>Proliferative_DR</code>. Those 295 images were dropped, so grade 4 never trained. Always print value counts after mapping. Add the typo to the dictionary.</p>
+  </div>
+
+  <h2>Ben Graham preprocessing</h2>
+  <p>Fundus photos come from many cameras: black circular borders, uneven lighting. The 2015 Kaggle DR winner’s trick, used in this file:</p>
+  <ol class="steps">
+    <li>Crop black borders (pixels below a gray tolerance).</li>
+    <li>Resize to the model size (224 here).</li>
+    <li>Local contrast: <code>addWeighted(img, 4, GaussianBlur(img, σ), -4, 128)</code> — subtract a blur so large lighting goes away and tiny lesions pop.</li>
+  </ol>
+  <p>This is domain knowledge. ImageNet preprocess alone does not fix a poorly lit retina. Match backbone preprocess <em>after</em> this (EfficientNet is not the same as <code>/255</code>).</p>
+
+  <h2>How you would finish the notebook</h2>
+  <p>Follow the flowers recipe: pretrained EfficientNetB3 (or ResNet50 / DenseNet121 as imported), frozen then fine-tuned, train-only augmentation, class weights, EarlyStopping, then kappa + confusion matrix + Grad-CAM on lesions. Treat it as a screening aid, not a diagnosis.</p>
+  <p>Grad-CAM matters more here than on flowers: a doctor should see heat on hemorrhages / exudates, not on the circular mask.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l10"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l9" data-page="l9">Previous</a>
+    <button class="btn primary" data-mark="l10">Mark done · next</button>
+  </div>
+</section>
+
+<!-- L11 -->
+<section class="page" id="page-l11">
+  <div class="kicker">Lesson 11 · All files</div>
+  <h1>The recipe you carry to a new dataset</h1>
+  <p class="lede">If you can pick the right row in this page, you have finished the course that lives in this folder.</p>
+
+  <h2>Which method?</h2>
+  <table>
+    <thead><tr><th>Your situation</th><th>Start with</th></tr></thead>
+    <tbody>
+      <tr><td>Tiny gray icons, learning Keras</td><td>Flatten MLP, then a small CNN (lessons 02–03)</td></tr>
+      <tr><td>Few thousand natural photos, 2–20 classes</td><td>Transfer learning + augmentation (lessons 05–06)</td></tr>
+      <tr><td>Medical / unusual camera</td><td>Domain preprocess, then transfer, class weights, not raw accuracy (lesson 10)</td></tr>
+      <tr><td>Identities that will grow over time</td><td>Embeddings + distance, not softmax over names (lessons 08–09)</td></tr>
+      <tr><td>Need a box around something</td><td>A detector, then a specialist model on the crop (lesson 09)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="lab">
+    <h3>Lab · pick the loss</h3>
+    <div id="lab-loss"></div>
+  </div>
+
+  <h2>Checklist (print this next to Colab)</h2>
+  <ol class="steps">
+    <li>Seed, then look: shapes, a few images, class counts.</li>
+    <li>Fix labels (typos, missing values, ordinal vs nominal).</li>
+    <li>Split so test never leaked. Stratify if classes are uneven.</li>
+    <li>Preprocess that matches the backbone. Augment train only.</li>
+    <li>Start simple: frozen pretrained net, or a small CNN if data is MNIST-like.</li>
+    <li>Compile the matching loss. Metric that matches the problem (accuracy vs F1 vs kappa).</li>
+    <li>Callbacks: early stop on val, checkpoint best weights.</li>
+    <li>Fine-tune last layers with a tiny LR if Phase 1 is healthy.</li>
+    <li>Confusion matrix, per-class scores, a few mistakes, Grad-CAM if you need trust.</li>
+    <li>Save the model. For apps, consider ONNX. For faces, write down the threshold and the ethics.</li>
+  </ol>
+
+  <h2>The Keras loop, one last time</h2>
+<pre><code># 1 look
+(x, y), (x_te, y_te) = load()
+# 2 digest
+x = preprocess(x)          # /255 or preprocess_input or reshape NHWC
+# 3 stack
+model = build()            # Sequential or Functional
+# 4 decide errors
+model.compile(loss=..., optimizer=..., metrics=...)
+# 5 learn
+hist = model.fit(x, y, validation_split=0.2, callbacks=...)
+# 6 tell the truth
+model.evaluate(x_te, y_te)
+pred = np.argmax(model.predict(x_te), axis=-1)</code></pre>
+
+  <h2>Optional extra in the folder</h2>
+  <p><code>Defense_Multi_Agent_LLM_fast.ipynb</code> is not computer vision. It is LangGraph + a local LLM: parallel specialist prompts, then a merge. Useful as “how you wrap models in a pipeline,” the same wrapping idea as Streamlit around attendance. Treat it as software architecture, not an operations system.</p>
+
+  <h2>What this folder never taught (so you know the edge)</h2>
+  <p>Object detection training (YOLO and friends), segmentation, video, self-supervised pretraining, transformers for vision (ViT), proper identity-disjoint face protocols, calibration of FAR/FRR. You have the spine. Those are next courses, not holes in lesson 00–10.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l11"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l10" data-page="l10">Previous</a>
+    <button class="btn primary" data-mark="l11">Mark done · glossary</button>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section class="page" id="page-glossary">
+  <div class="kicker">Reference</div>
+  <h1>Glossary</h1>
+  <p class="lede">Words as they are used in these practicals, not as a textbook dump.</p>
+  <dl class="glossary">
+    <dt>Accuracy</dt><dd>Fraction of correct labels. Lies when one class dominates (eye disease, sometimes diabetes).</dd>
+    <dt>Adam / AdamW</dt><dd>Optimizers that adapt step size per weight. Default in almost every notebook here. AdamW adds decoupled weight decay (CIFAR file).</dd>
+    <dt>ArcFace</dt><dd>A face-embedding model. Attendance notebook runs it in ONNX; 512-D unit vectors.</dd>
+    <dt>Augmentation</dt><dd>Random legal warps of training images. Train only.</dd>
+    <dt>Batch / epoch</dt><dd>Batch = examples per update. Epoch = one pass over the training set.</dd>
+    <dt>BatchNorm</dt><dd>Normalizes layer activations. During transfer learning, keep backbone BN in inference mode (<code>training=False</code>).</dd>
+    <dt>Binary crossentropy</dt><dd>Loss for one sigmoid output (diabetes, IMDB).</dd>
+    <dt>Callback</dt><dd>Hook during <code>fit</code>: early stop, save, drop LR.</dd>
+    <dt>Categorical vs sparse categorical</dt><dd>Softmax losses. Categorical wants one-hot labels; sparse wants integer labels.</dd>
+    <dt>Channel</dt><dd>Depth of an image tensor: 1 = gray, 3 = RGB. CNNs need it explicit.</dd>
+    <dt>Class weight</dt><dd>Extra loss weight on rare classes so the net cannot ignore them.</dd>
+    <dt>Contrastive loss</dt><dd>Pair loss: pull same identities together, push others past a margin.</dd>
+    <dt>Conv2D</dt><dd>Learned sliding filters. The vision layer.</dd>
+    <dt>Cosine distance</dt><dd>For unit vectors, 1 − dot product. Attendance match if &lt; 0.40.</dd>
+    <dt>Dense / fully connected</dt><dd>Every input to every neuron. Fine for tables and for the tail of a CNN.</dd>
+    <dt>Dropout</dt><dd>Randomly disable neurons while training to reduce overfitting. Off at test time.</dd>
+    <dt>Embedding</dt><dd>A vector that represents an image or a sentence so distance means similarity.</dd>
+    <dt>Feature extraction</dt><dd>Phase 1 of transfer learning: frozen backbone, trained head.</dd>
+    <dt>Feature map</dt><dd>The 2D output of one convolutional filter.</dd>
+    <dt>Fine-tuning</dt><dd>Unfreeze upper backbone layers, tiny learning rate.</dd>
+    <dt>Flatten</dt><dd>H×W becomes a vector. Drops spatial layout.</dd>
+    <dt>Functional API</dt><dd>Keras style that can have two inputs (Siamese) or a pretrained trunk + head (flowers).</dd>
+    <dt>Grad-CAM</dt><dd>Heatmap of which pixels drove a class score.</dd>
+    <dt>ImageNet</dt><dd>Large labeled photo set. Source of MobileNet / EfficientNet weights.</dd>
+    <dt>Logits</dt><dd>Raw scores before softmax. PyTorch CrossEntropyLoss wants these.</dd>
+    <dt>Max pooling</dt><dd>Downsample by keeping the max in a window.</dd>
+    <dt>Metric learning</dt><dd>Train a space where distance is the prediction (Siamese), not a class name.</dd>
+    <dt>MobileNetV2</dt><dd>Small ImageNet CNN. Flowers notebook backbone. Input 224, preprocess to [−1, 1].</dd>
+    <dt>One-hot</dt><dd>Class 6 → a 10-long vector with a 1 in slot 6.</dd>
+    <dt>One-shot</dt><dd>Recognize from a single reference example via embeddings.</dd>
+    <dt>ONNX</dt><dd>Portable trained-model format. Attendance uses it so the app stays light.</dd>
+    <dt>Overfitting</dt><dd>Train metric much better than val/test. Augmentation, dropout, early stop, more data, simpler head.</dd>
+    <dt>Padding (valid / same)</dt><dd>valid = no extra border, map shrinks. same = keep size when stride is 1.</dd>
+    <dt>Preprocess_input</dt><dd>Per-backbone scaling. Never mix with a random /255.</dd>
+    <dt>Quadratic weighted kappa</dt><dd>Agreement score that punishes far-off ordinal mistakes more. APTOS DR metric.</dd>
+    <dt>ReLU</dt><dd>max(0, x). Hidden-layer default.</dd>
+    <dt>Sequential</dt><dd>Linear stack of layers. Enough until Siamese / skip connections.</dd>
+    <dt>Siamese network</dt><dd>Two towers, shared weights, compare embeddings.</dd>
+    <dt>Sigmoid</dt><dd>Maps one number to (0, 1). Binary last layer.</dd>
+    <dt>Softmax</dt><dd>Maps K numbers to K probabilities that sum to 1.</dd>
+    <dt>SSD (Res10)</dt><dd>The face detector in the attendance notebook. Outputs boxes, not names.</dd>
+    <dt>Stride</dt><dd>Step of a sliding window. Larger stride → smaller map.</dd>
+    <dt>TF Hub</dt><dd>Library of pretrained layers. Used for IMDB text, not for the flower “tfh” duplicate file.</dd>
+    <dt>Transfer learning</dt><dd>Reuse weights from a related large task.</dd>
+    <dt>Validation split</dt><dd>Data used to choose epochs / hyperparameters. Not the final test set.</dd>
+  </dl>
+  <div class="pager">
+    <a class="btn" href="#l11" data-page="l11">Back to recipe</a>
+    <a class="btn primary" href="#home" data-page="home">Home</a>
+  </div>
+</section>
+
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

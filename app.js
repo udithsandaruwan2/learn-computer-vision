@@ -769,10 +769,11 @@ function initTheme() {
   const btn = document.getElementById("theme-btn");
   const apply = (t) => {
     document.documentElement.setAttribute("data-theme", t);
-    localStorage.setItem("cv-theme", t);
+    localStorage.setItem("cv-theme-v2", t);
+    try { localStorage.removeItem("cv-theme"); } catch (e) {}
     if (btn) btn.textContent = t === "dark" ? "Day mode" : "Night mode";
   };
-  let t = localStorage.getItem("cv-theme") || "dark";
+  let t = localStorage.getItem("cv-theme-v2") || "dark";
   apply(t);
   if (btn) btn.addEventListener("click", () => {
     apply(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");

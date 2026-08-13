@@ -7,11 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2">
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("cv-theme") || "dark";
+        localStorage.removeItem("cv-theme");
+        var t = localStorage.getItem("cv-theme-v2") || "dark";
         document.documentElement.setAttribute("data-theme", t);
       } catch (e) {
         document.documentElement.setAttribute("data-theme", "dark");
@@ -1175,6 +1176,6 @@ pred = np.argmax(model.predict(x_te), axis=-1)  # classification
 
   </main>
 </div>
-<script src="app.js"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 const PAGES = [
-  "home", "map",
+  "home", "map", "theory",
   "l0", "l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10", "l12", "l11",
   "glossary"
 ];
 
-const LESSONS = ["l0","l1","l2","l3","l4","l5","l6","l7","l8","l9","l10","l12","l11"];
+const LESSONS = ["theory","l0","l1","l2","l3","l4","l5","l6","l7","l8","l9","l10","l12","l11"];
 const KEY = "cv-learn-done";
 
 function doneSet() {
@@ -76,6 +76,12 @@ window.addEventListener("hashchange", () => {
 
 /* ---------- quizzes ---------- */
 const QUIZZES = {
+  theory: [
+    { q: "Machine learning means:", opts: ["Writing if/else for every photo", "A program that improves from examples", "Only drawing boxes", "Deleting test data"], a: 1, e: "You show examples (features + labels). The model adjusts weights so future guesses get better." },
+    { q: "A CNN is a neural net that:", opts: ["Only works on spreadsheets", "Slides small filters over an image", "Always uses softmax with 1 class", "Never uses ReLU"], a: 1, e: "Convolution = shared filters. That is what makes it a Convolutional Neural Network." },
+    { q: "Loss vs metric:", opts: ["They are the same number", "Loss is what training shrinks; a metric is a score you watch", "Metric updates weights", "Loss is always a percent"], a: 1, e: "compile(loss=..., metrics=[...]). Adam follows the loss. Accuracy/Dice/F1 are reports." },
+    { q: "After a basic CNN, transfer learning means:", opts: ["Throwing ImageNet away", "Reusing a net already trained on a huge dataset", "Augmenting the test set", "Predicting without images"], a: 1, e: "Freeze a backbone (MobileNet), train a small head, then optionally fine-tune slowly." }
+  ],
   l0: [
     { q: "A grayscale pixel value of 0 usually means:", opts: ["White", "Black", "Red", "Transparent"], a: 1, e: "In typical image arrays, 0 is black and 255 is white." },
     { q: "An RGB image with height 28 and width 28 has shape:", opts: ["(28, 28)", "(28, 28, 1)", "(28, 28, 3)", "(3, 28)"], a: 2, e: "Color images have 3 channels: red, green, blue." },
@@ -654,6 +660,99 @@ function initDice() {
   draw();
 }
 
+const GLOSSARY = [
+  { g: "The big picture", t: "Artificial intelligence (AI)", d: "Any technique that makes a computer act usefully on a task that used to need a person. ML is one kind of AI." },
+  { g: "The big picture", t: "Machine learning (ML)", d: "Instead of writing a rule for every case, you show examples. The program adjusts numbers (weights) so it guesses better next time." },
+  { g: "The big picture", t: "Deep learning (DL)", d: "ML that uses neural networks with several layers. Every notebook in this folder is deep learning." },
+  { g: "The big picture", t: "Computer vision (CV)", d: "ML whose input is images (or video). What is in this picture? Where? Who? Which pixels?" },
+  { g: "The big picture", t: "Supervised learning", d: "Each training example has a correct answer (a label). Diabetes yes/no, digit 0–9, tumor mask. Almost this whole course." },
+  { g: "Data", t: "Feature", d: "A number the model sees. Glucose, or one pixel, or a whole learned vector (embedding)." },
+  { g: "Data", t: "Label / target / y", d: "The answer you want. 0/1, class 9, or a mask image. Training compares the prediction to y." },
+  { g: "Data", t: "Train / validation / test", d: "Train = fit weights. Val = peek while training. Test = one honest score at the end. Never train on test." },
+  { g: "Data", t: "Batch", d: "A small group of examples in one weight update. batch_size=32 means 32 images per step." },
+  { g: "Data", t: "Epoch", d: "One full pass over the training set. 10 epochs = every train image about 10 times." },
+  { g: "Data", t: "Normalization", d: "Put numbers on a friendly range. Pixels /255 → 0–1. MobileNet ≈ −1 to 1." },
+  { g: "Data", t: "Shape / tensor", d: "How the array is laid out, e.g. (28,28,1). A tensor is a multi-dimensional array." },
+  { g: "Data", t: "Channel", d: "1 = gray, 3 = RGB. After Conv2D(32) you have 32 feature-map channels." },
+  { g: "Data", t: "Class imbalance", d: "One class is rare. Accuracy looks high if you always guess the common class." },
+  { g: "Neural net", t: "Neuron", d: "z = w·x + b, then an activation. One little calculator." },
+  { g: "Neural net", t: "Weight", d: "A number the model learns. Training changes weights so guesses improve." },
+  { g: "Neural net", t: "Bias", d: "A learned offset, like the intercept in a line." },
+  { g: "Neural net", t: "Activation", d: "A curve after z. ReLU, sigmoid, softmax. Without it, stacked layers collapse to one linear map." },
+  { g: "Neural net", t: "ReLU", d: "max(0, z). Default hidden activation in these notebooks." },
+  { g: "Neural net", t: "Sigmoid", d: "Squishes one number to (0,1). Binary last layer." },
+  { g: "Neural net", t: "Softmax", d: "K scores → K probabilities that sum to 1. Exclusive classes (10 digits, 5 flowers)." },
+  { g: "Neural net", t: "Dense / MLP", d: "Every input connects to every neuron. Fine for tables; wasteful on raw photos." },
+  { g: "Neural net", t: "Hidden layer", d: "Any layer that is not the input and not the final output." },
+  { g: "Neural net", t: "Sequential vs Functional", d: "Sequential = a line. Functional = can branch and merge (Siamese, U-Net skips)." },
+  { g: "Neural net", t: "Parameter", d: "A weight or bias training can change. model.summary() counts them." },
+  { g: "Training", t: "Loss", d: "A number that says how wrong. Training’s only job is to make it smaller. Not always a percent." },
+  { g: "Training", t: "Metric", d: "A score you watch (accuracy, Dice, kappa). It does not update weights unless it is also the loss." },
+  { g: "Training", t: "Gradient", d: "How loss changes if you nudge a weight. Tells you which way to move it." },
+  { g: "Training", t: "Backpropagation", d: "Send the error backward through the layers so every weight gets a gradient. Keras does this inside fit()." },
+  { g: "Training", t: "Optimizer / Adam", d: "The rule that uses gradients to update weights. Adam is the default here." },
+  { g: "Training", t: "Learning rate", d: "Step size. Too big = bouncing. Fine-tune pretrained nets with a tiny LR like 1e-5." },
+  { g: "Training", t: "compile / fit / evaluate / predict", d: "Pick loss+optimizer → train → score a set → raw outputs." },
+  { g: "Training", t: "Overfitting", d: "Great on train, worse on val/test. Memorized the homework, failed the exam." },
+  { g: "Training", t: "Underfitting", d: "Bad on train and test. Too simple or not trained long enough." },
+  { g: "Training", t: "Regularization", d: "Anything that fights overfitting: dropout, augmentation, weight decay, early stop." },
+  { g: "Training", t: "Callback", d: "A hook during fit: EarlyStopping, ModelCheckpoint, ReduceLROnPlateau." },
+  { g: "CNN", t: "CNN / ConvNet", d: "Convolutional Neural Network: slides small filters over a grid instead of flattening first." },
+  { g: "CNN", t: "Convolution", d: "At each position, multiply overlapping pixels by the kernel and add. One number in the feature map." },
+  { g: "CNN", t: "Kernel / filter", d: "The small weight grid (often 3×3) that slides. Training learns the numbers inside it." },
+  { g: "CNN", t: "Feature map", d: "The 2D result of one filter. Bright where that pattern was found." },
+  { g: "CNN", t: "Local connectivity", d: "A conv neuron only looks at a neighborhood. Images are local (edges, textures)." },
+  { g: "CNN", t: "Weight sharing", d: "The same kernel is reused everywhere. “Vertical edge” costs 9 weights, not a new set per pixel." },
+  { g: "CNN", t: "Stride", d: "How many pixels the kernel jumps. 1 = dense. 2 = skip; the map shrinks faster." },
+  { g: "CNN", t: "Padding (valid / same)", d: "valid = no extra border, size shrinks. same = pad so size stays when stride is 1." },
+  { g: "CNN", t: "Max pooling", d: "Downsample: keep the strongest value in each 2×2 block." },
+  { g: "CNN", t: "Receptive field", d: "How much of the original image one deep number can “see.” Grows with convs and pools." },
+  { g: "CNN", t: "Flatten", d: "Turn H×W into a list before Dense. Throws away the grid." },
+  { g: "CNN", t: "Logits", d: "Raw class scores before softmax. PyTorch CrossEntropyLoss wants these." },
+  { g: "After CNN", t: "Dropout", d: "During training, randomly turn neurons off. Off at test time." },
+  { g: "After CNN", t: "BatchNorm", d: "Keeps layer outputs on a stable scale. Freeze BN stats when doing transfer learning." },
+  { g: "After CNN", t: "Data augmentation", d: "Legal random warps of train images. Never augment the honest test set." },
+  { g: "After CNN", t: "Transfer learning", d: "Reuse a net trained on a huge set (ImageNet) instead of training filters from scratch." },
+  { g: "After CNN", t: "Feature extraction vs fine-tune", d: "Phase 1: freeze backbone, train a head. Phase 2: unfreeze upper layers with a tiny LR." },
+  { g: "After CNN", t: "include_top=False", d: "Drop ImageNet’s 1000-class head. Keep visual features; add your classes." },
+  { g: "After CNN", t: "Grad-CAM", d: "Heatmap of which pixels drove a class score. Explains a classifier; not a trained mask." },
+  { g: "After CNN", t: "Embedding", d: "A vector that stands for an image or a sentence. Nearby = similar." },
+  { g: "After CNN", t: "Siamese / contrastive / cosine", d: "Two shared towers, pull same identities close, match with cosine distance. Not softmax over names." },
+  { g: "After CNN", t: "Detection vs recognition", d: "Detection = find a box (SSD). Recognition = who is inside (ArcFace)." },
+  { g: "After CNN", t: "Segmentation / mask / U-Net / Dice", d: "A class for every pixel. U-Net draws the map. Dice scores overlap — accuracy will lie on tiny tumors." },
+  { g: "After CNN", t: "Quadratic weighted kappa", d: "Agreement that punishes far-off ordinal mistakes more. Eye-disease metric." },
+  { g: "After CNN", t: "One-hot", d: "Class 6 → a 10-long vector with a 1 in slot 6. Used with categorical_crossentropy." },
+  { g: "After CNN", t: "ArcFace / ONNX", d: "A pretrained face embedding (512-D). ONNX runs it without TensorFlow. Attendance notebook." },
+  { g: "After CNN", t: "MobileNetV2 / ImageNet", d: "A small CNN pretrained on ImageNet’s 1000 classes. Flowers transfer-learning backbone." }
+];
+
+function renderGlossary(filter) {
+  const root = document.getElementById("glossary-root");
+  if (!root) return;
+  const q = (filter || "").trim().toLowerCase();
+  const groups = [];
+  GLOSSARY.forEach(item => {
+    const hay = (item.t + " " + item.d).toLowerCase();
+    if (q && !hay.includes(q)) return;
+    let g = groups.find(x => x.name === item.g);
+    if (!g) { g = { name: item.g, items: [] }; groups.push(g); }
+    g.items.push(item);
+  });
+  const n = groups.reduce((s, g) => s + g.items.length, 0);
+  root.innerHTML = `<div class="g-count">${n} word${n === 1 ? "" : "s"}</div>` + (groups.map(g => `
+    <div class="g-group">
+      <h3>${g.name}</h3>
+      ${g.items.map(item => `<div class="g-item"><dt>${item.t}</dt><dd>${item.d}</dd></div>`).join("")}
+    </div>
+  `).join("") || `<p>No match. Try cnn, loss, or mask.</p>`);
+}
+
+function initGlossary() {
+  const inp = document.getElementById("glossary-search");
+  renderGlossary("");
+  if (inp) inp.addEventListener("input", () => renderGlossary(inp.value));
+}
+
 function initTheme() {
   const btn = document.getElementById("theme-btn");
   const apply = (t) => {
@@ -696,6 +795,7 @@ function initNorm() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initGlossary();
   renderQuizzes();
   initNeuron();
   initOneHot();

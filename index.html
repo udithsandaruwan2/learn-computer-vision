@@ -33,6 +33,7 @@
         <div class="nav-label">Start</div>
         <a href="#home" data-page="home"><span class="num">•</span> Home</a>
         <a href="#map" data-page="map"><span class="num">•</span> Learning map</a>
+        <a href="#theory" data-page="theory"><span class="num">•</span> Words &amp; theory</a>
       </div>
       <div class="nav-group">
         <div class="nav-label">Lessons</div>
@@ -71,7 +72,7 @@
 
   <div class="callout">
     <h3>How to use this</h3>
-    <p>Read in order. Do the lab. Take the quiz. Mark the lesson done. The map page shows <em>why</em> this order exists — it is not the order the files were named.</p>
+    <p>Read in order. If a word is new, open <a href="#theory" data-page="theory">Words &amp; theory</a> or search the glossary. Then do the lab and quiz.</p>
   </div>
 
   <h2>What is in your folder</h2>
@@ -106,7 +107,7 @@
 
   <div class="pager">
     <span></span>
-    <a class="btn primary" href="#map" data-page="map">See the learning map</a>
+    <a class="btn primary" href="#theory" data-page="theory">Start with the words</a>
   </div>
 </section>
 
@@ -155,7 +156,96 @@
 
   <div class="pager">
     <a class="btn" href="#home" data-page="home">Back</a>
-    <a class="btn primary" href="#l0" data-page="l0">Start lesson 00</a>
+    <a class="btn primary" href="#theory" data-page="theory">Words &amp; theory first</a>
+  </div>
+</section>
+
+<!-- THEORY -->
+<section class="page" id="page-theory">
+  <div class="kicker">Before the notebooks</div>
+  <h1>Every new word, in order</h1>
+  <p class="lede">Machine learning, neural nets, CNNs, then everything that sits on top of a CNN. Each word is one idea. The later lessons only show it in code.</p>
+  <div class="toc-mini">
+    <a href="#th-ml">ML</a>
+    <a href="#th-train">How a net learns</a>
+    <a href="#th-cnn">CNN</a>
+    <a href="#th-after">After CNN</a>
+  </div>
+
+  <h2 id="th-ml">1. Machine learning (the family)</h2>
+  <div class="term-grid">
+    <div class="term"><h4>AI</h4><p>Any trick that makes a computer do a job that used to need a person. Broad umbrella.</p></div>
+    <div class="term"><h4>Machine learning (ML)</h4><p>You do <em>not</em> write “if this pixel then shoe.” You show examples. The program changes its numbers until guesses get better.</p></div>
+    <div class="term"><h4>Deep learning (DL)</h4><p>ML that uses a <strong>neural network</strong> with several layers. Every notebook in your folder is this.</p></div>
+    <div class="term"><h4>Computer vision (CV)</h4><p>The examples are <strong>images</strong>. What is it? Where is it? Who is it? Which pixels?</p></div>
+  </div>
+  <p><strong>Supervised learning</strong> (this whole course): each example has a correct answer, the <strong>label</strong>. Features go in, label is what you want out.</p>
+  <table>
+    <thead><tr><th>Word</th><th>In one breath</th><th>Your files</th></tr></thead>
+    <tbody>
+      <tr><td>Feature</td><td>What the model sees</td><td>Glucose; a pixel; later an embedding</td></tr>
+      <tr><td>Label y</td><td>The answer</td><td>0/1 diabetes; class 9; a tumor mask</td></tr>
+      <tr><td>Model</td><td>The stack of layers + learned weights</td><td><code>Sequential</code> / U-Net</td></tr>
+      <tr><td>Prediction</td><td>The current guess</td><td><code>model.predict</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="th-train">2. How a neural net learns</h2>
+  <p>A <strong>neuron</strong> does <code>z = w·x + b</code>, then an <strong>activation</strong> (ReLU, sigmoid, softmax). A <strong>layer</strong> is many neurons. <strong>Weights</strong> and <strong>bias</strong> are the knobs training turns.</p>
+  <ol class="steps">
+    <li>Forward: data flows through layers → a prediction.</li>
+    <li><strong>Loss</strong> measures “how wrong” (not always a percent).</li>
+    <li><strong>Backpropagation</strong> sends that error backward so every weight gets a <strong>gradient</strong> (“nudge me this way”).</li>
+    <li>The <strong>optimizer</strong> (usually <strong>Adam</strong>) takes a step of size <strong>learning rate</strong>.</li>
+    <li>Repeat on the next <strong>batch</strong>. One full pass over train data = one <strong>epoch</strong>.</li>
+  </ol>
+  <p>Keras hides steps 3–4 inside <code>fit()</code>. <code>compile(loss=..., optimizer=..., metrics=...)</code> only <em>chooses</em> them. A <strong>metric</strong> (accuracy, Dice) is a score you watch; it does not update weights unless it is also the loss.</p>
+  <div class="compare">
+    <div class="mini"><h4>Overfitting</h4><p>Great on train, worse on val/test. Memorized homework, failed the exam. Fix with dropout, augmentation, early stop, more data.</p></div>
+    <div class="mini"><h4>Underfitting</h4><p>Bad on train and test. Too simple or not trained long enough.</p></div>
+  </div>
+  <p><strong>Train / validation / test:</strong> train fits weights. Val is the practice exam during training. Test is the real exam once. Never train on test.</p>
+
+  <h2 id="th-cnn">3. CNN — Convolutional Neural Network</h2>
+  <p>A CNN is still a neural net. The new idea is <strong>convolution</strong>: a small <strong>kernel</strong> (often 3×3) slides over the image. At each stop it multiplies, adds, and writes one number into a <strong>feature map</strong>.</p>
+  <div class="term-grid">
+    <div class="term"><h4>Why not Flatten + Dense?</h4><p>Flatten makes a long list. Neighbor pixels are no longer neighbors. A Dense net does not “see” an edge as an edge.</p></div>
+    <div class="term"><h4>Local connectivity</h4><p>Each conv neuron looks only at a small neighborhood — how pictures are built.</p></div>
+    <div class="term"><h4>Weight sharing</h4><p>The same 3×3 is reused everywhere. “Vertical edge” costs 9 weights, not a new set per pixel.</p></div>
+    <div class="term"><h4>Feature hierarchy</h4><p>Early filters: edges. Deeper: parts (a loop of an 8, an eye). You do not draw them; training writes them.</p></div>
+    <div class="term"><h4>Stride</h4><p>Jump size. 1 = scan every pixel. 2 = skip; the map shrinks faster.</p></div>
+    <div class="term"><h4>Padding</h4><p><code>valid</code> = no extra border (28→26 with 3×3). <code>same</code> = pad so size stays when stride is 1.</p></div>
+    <div class="term"><h4>Pooling</h4><p>Max 2×2 keeps the strongest value in each block. Smaller maps, a little shift-tolerance.</p></div>
+    <div class="term"><h4>Receptive field</h4><p>How much of the original photo one deep number can “see.” Grows as you conv and pool.</p></div>
+  </div>
+  <p>Lesson 04 has clickable labs for kernel, output size, and pooling. Lesson 03 is the same MNIST digits as an MLP then as a CNN — CNN wins.</p>
+
+  <h2 id="th-after">4. After a basic CNN</h2>
+  <p>Once conv + pool + Dense works, the rest of the folder is <em>better training</em> and <em>new output types</em>.</p>
+  <table>
+    <thead><tr><th>Idea</th><th>In one breath</th><th>Lesson</th></tr></thead>
+    <tbody>
+      <tr><td>Dropout</td><td>Randomly turn neurons off while training so the net cannot cling to one path</td><td>03, 05</td></tr>
+      <tr><td>Augmentation</td><td>Flip/crop train images. Same label. Never warp the test set</td><td>05</td></tr>
+      <tr><td>BatchNorm</td><td>Keep layer values on a stable scale</td><td>05, 06</td></tr>
+      <tr><td>Transfer learning</td><td>Reuse ImageNet filters. Freeze, train a head, then fine-tune slowly</td><td>06</td></tr>
+      <tr><td>Embedding</td><td>Turn an image (or sentence) into a vector. Nearby = similar</td><td>07–09</td></tr>
+      <tr><td>Siamese + contrastive</td><td>Two shared towers. Pull same faces close; push others past a margin</td><td>08</td></tr>
+      <tr><td>Detect vs recognize</td><td>Box (SSD) is not a name (ArcFace + cosine)</td><td>09</td></tr>
+      <tr><td>Imbalance / kappa</td><td>Accuracy lies if one class dominates. Use weights, F1, kappa</td><td>10</td></tr>
+      <tr><td>Segmentation / U-Net / Dice</td><td>Label every pixel. Skip connections keep “where.” Dice = overlap, not accuracy</td><td>11</td></tr>
+      <tr><td>Grad-CAM</td><td>Heatmap of where a <em>classifier</em> looked. Not a trained mask</td><td>06, 10</td></tr>
+    </tbody>
+  </table>
+  <p>Search every definition: <a href="#glossary" data-page="glossary">glossary</a>.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-theory"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#map" data-page="map">Map</a>
+    <button class="btn primary" data-mark="theory">Mark done · lesson 00</button>
   </div>
 </section>
 
@@ -292,6 +382,17 @@ model.predict(X_test[11:22])     # probabilities, not 0/1</code></pre>
     <li><strong>Batch size</strong> = how many rows per weight update. They used 10. Smaller batches = more updates per epoch, noisier steps.</li>
     <li><strong>Accuracy</strong> = fraction of correct 0/1 guesses (after thresholding 0.5). Their test run was about <strong>71%</strong>.</li>
   </ul>
+
+  <h2>Backprop in plain language</h2>
+  <p>The notebook comment says compile is “configuring back-propagation.” Here is what that means, without calculus:</p>
+  <ol class="steps">
+    <li>The net guesses (forward pass).</li>
+    <li><strong>Loss</strong> says how wrong that guess was.</li>
+    <li>A <strong>gradient</strong> for each weight: “if I nudge you up, does loss go down?”</li>
+    <li><strong>Backpropagation</strong> is just the chain rule through the layers, so every weight gets that nudge signal — even the first Dense layer.</li>
+    <li><strong>Adam</strong> (the optimizer) actually changes the weights. <strong>Learning rate</strong> is how big each change is.</li>
+  </ol>
+  <p>You never write that loop. <code>fit()</code> does it. A <strong>metric</strong> like accuracy is only a report card. Training follows the <em>loss</em>.</p>
 
   <h2>Train / test split</h2>
   <p><code>train_test_split(..., test_size=0.2)</code> keeps 20% of rows unseen. That is the only honest score. There is no validation set here — later MNIST adds <code>validation_split=0.2</code> so you can watch overfitting during training.</p>
@@ -475,6 +576,16 @@ model.fit(..., epochs=10, batch_size=128, validation_split=0.2)</code></pre>
     <li><strong>Local connectivity</strong> — a neuron only looks at a small neighborhood, which is how images are structured.</li>
     <li><strong>Weight sharing</strong> — the same 3×3 is reused everywhere, so “vertical edge” is detected in every location with the same 9 weights. Far fewer parameters than a Dense layer on 784 pixels.</li>
   </ul>
+  <table>
+    <thead><tr><th></th><th>MLP (Flatten + Dense)</th><th>CNN</th></tr></thead>
+    <tbody>
+      <tr><td>Sees the photo as</td><td>A bag of 784 numbers</td><td>A grid; neighbors stay neighbors</td></tr>
+      <tr><td>Parameters</td><td>Huge (every pixel to every neuron)</td><td>Small shared kernels</td></tr>
+      <tr><td>Translation</td><td>A shifted 7 looks like new data</td><td>The same filter still finds the stroke</td></tr>
+      <tr><td>Your MNIST run</td><td>~97.5% test</td><td>~99.1% test</td></tr>
+    </tbody>
+  </table>
+  <p>That is the whole “CNN theory”: convolution = sliding shared filters; then pooling shrinks; then maybe Dense at the end for classes. Everything after this lesson (augmentation, transfer, U-Net) still uses this block.</p>
 
   <div class="lab">
     <h3>Lab · 5×5 image, 3×3 kernel</h3>
@@ -981,62 +1092,11 @@ pred = np.argmax(model.predict(x_te), axis=-1)  # classification
 <section class="page" id="page-glossary">
   <div class="kicker">Reference</div>
   <h1>Glossary</h1>
-  <p class="lede">Words as they are used in these practicals, not as a textbook dump.</p>
-  <dl class="glossary">
-    <dt>Accuracy</dt><dd>Fraction of correct labels. Lies when one class dominates (eye disease, sometimes diabetes).</dd>
-    <dt>Adam / AdamW</dt><dd>Optimizers that adapt step size per weight. Default in almost every notebook here. AdamW adds decoupled weight decay (CIFAR file).</dd>
-    <dt>ArcFace</dt><dd>A face-embedding model. Attendance notebook runs it in ONNX; 512-D unit vectors.</dd>
-    <dt>Augmentation</dt><dd>Random legal warps of training images. Train only.</dd>
-    <dt>Batch / epoch</dt><dd>Batch = examples per update. Epoch = one pass over the training set.</dd>
-    <dt>BatchNorm</dt><dd>Normalizes layer activations. During transfer learning, keep backbone BN in inference mode (<code>training=False</code>).</dd>
-    <dt>Binary crossentropy</dt><dd>Loss for one sigmoid output (diabetes, IMDB).</dd>
-    <dt>Callback</dt><dd>Hook during <code>fit</code>: early stop, save, drop LR.</dd>
-    <dt>Categorical vs sparse categorical</dt><dd>Softmax losses. Categorical wants one-hot labels; sparse wants integer labels.</dd>
-    <dt>Channel</dt><dd>Depth of an image tensor: 1 = gray, 3 = RGB. CNNs need it explicit.</dd>
-    <dt>Class weight</dt><dd>Extra loss weight on rare classes so the net cannot ignore them.</dd>
-    <dt>Contrastive loss</dt><dd>Pair loss: pull same identities together, push others past a margin.</dd>
-    <dt>Conv2D</dt><dd>Learned sliding filters. The vision layer.</dd>
-    <dt>Cosine distance</dt><dd>For unit vectors, 1 − dot product. Attendance match if &lt; 0.40.</dd>
-    <dt>Dense / fully connected</dt><dd>Every input to every neuron. Fine for tables and for the tail of a CNN.</dd>
-    <dt>Dropout</dt><dd>Randomly disable neurons while training to reduce overfitting. Off at test time.</dd>
-    <dt>Embedding</dt><dd>A vector that represents an image or a sentence so distance means similarity.</dd>
-    <dt>Feature extraction</dt><dd>Phase 1 of transfer learning: frozen backbone, trained head.</dd>
-    <dt>Feature map</dt><dd>The 2D output of one convolutional filter.</dd>
-    <dt>Fine-tuning</dt><dd>Unfreeze upper backbone layers, tiny learning rate.</dd>
-    <dt>Flatten</dt><dd>H×W becomes a vector. Drops spatial layout.</dd>
-    <dt>Dice coefficient / Dice loss</dt><dd>Overlap of two blobs: 2 × intersection / (true + pred). Loss is 1 − Dice. Use this for tumor masks; pixel accuracy will lie.</dd>
-    <dt>Functional API</dt><dd>Keras style that can have two inputs (Siamese), a pretrained trunk + head (flowers), or skip concatenations (U-Net).</dd>
-    <dt>Grad-CAM</dt><dd>Heatmap of which pixels drove a class score.</dd>
-    <dt>ImageNet</dt><dd>Large labeled photo set. Source of MobileNet / EfficientNet weights.</dd>
-    <dt>Logits</dt><dd>Raw scores before softmax. PyTorch CrossEntropyLoss wants these.</dd>
-    <dt>Mask (image)</dt><dd>A second image, same size as the input, that labels each pixel (tumor vs not). The target in the LGG MRI notebook.</dd>
-    <dt>Max pooling</dt><dd>Downsample by keeping the max in a window.</dd>
-    <dt>IoU / Jaccard</dt><dd>Intersection over union of two masks. Same idea as Dice, slightly harsher. Not logged in the tumor notebook.</dd>
-    <dt>Metric learning</dt><dd>Train a space where distance is the prediction (Siamese), not a class name.</dd>
-    <dt>MobileNetV2</dt><dd>Small ImageNet CNN. Flowers notebook backbone. Input 224, preprocess to [−1, 1].</dd>
-    <dt>One-hot</dt><dd>Class 6 → a 10-long vector with a 1 in slot 6.</dd>
-    <dt>One-shot</dt><dd>Recognize from a single reference example via embeddings.</dd>
-    <dt>ONNX</dt><dd>Portable trained-model format. Attendance uses it so the app stays light.</dd>
-    <dt>Overfitting</dt><dd>Train metric much better than val/test. Augmentation, dropout, early stop, more data, simpler head.</dd>
-    <dt>Padding (valid / same)</dt><dd>valid = no extra border, map shrinks. same = keep size when stride is 1.</dd>
-    <dt>Preprocess_input</dt><dd>Per-backbone scaling. Never mix with a random /255.</dd>
-    <dt>Quadratic weighted kappa</dt><dd>Agreement score that punishes far-off ordinal mistakes more. APTOS DR metric.</dd>
-    <dt>ReLU</dt><dd>max(0, x). Hidden-layer default.</dd>
-    <dt>Sequential</dt><dd>Linear stack of layers. Enough until Siamese / skip connections.</dd>
-    <dt>Semantic segmentation</dt><dd>Assign a class to every pixel. Tumor masks are binary segmentation.</dd>
-    <dt>Siamese network</dt><dd>Two towers, shared weights, compare embeddings.</dd>
-    <dt>Sigmoid</dt><dd>Maps one number to (0, 1). Binary last layer.</dd>
-    <dt>Softmax</dt><dd>Maps K numbers to K probabilities that sum to 1.</dd>
-    <dt>SSD (Res10)</dt><dd>The face detector in the attendance notebook. Outputs boxes, not names.</dd>
-    <dt>Stride</dt><dd>Step of a sliding window. Larger stride → smaller map.</dd>
-    <dt>TF Hub</dt><dd>Library of pretrained layers. Used for IMDB text, not for the flower “tfh” duplicate file.</dd>
-    <dt>Transfer learning</dt><dd>Reuse weights from a related large task.</dd>
-    <dt>U-Net</dt><dd>Encoder–decoder CNN with skip concatenations so you can label every pixel. Mini version in the tumor notebook.</dd>
-    <dt>UpSampling2D</dt><dd>Enlarge a feature map (usually 2×). U-Net decoder; no extra learned filters, unlike Conv2DTranspose.</dd>
-    <dt>Validation split</dt><dd>Data used to choose epochs / hyperparameters. Not the final test set.</dd>
-  </dl>
+  <p class="lede">Type any word from the course. Definitions stay in the same simple language as the theory page.</p>
+  <input type="search" id="glossary-search" placeholder="Search: cnn, loss, mask, adam…" autocomplete="off">
+  <div id="glossary-root" class="glossary"></div>
   <div class="pager">
-    <a class="btn" href="#l11" data-page="l11">Back to recipe</a>
+    <a class="btn" href="#theory" data-page="theory">Words &amp; theory</a>
     <a class="btn primary" href="#home" data-page="home">Home</a>
   </div>
 </section>

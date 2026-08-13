@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("cv-theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 <div class="app">
@@ -18,6 +27,7 @@
       <p>From your subject files, start to finish.</p>
     </div>
     <button class="menu-btn" id="menu-btn" type="button">Menu</button>
+    <button class="btn theme-btn" id="theme-btn" type="button">Dark mode</button>
     <nav class="nav">
       <div class="nav-group">
         <div class="nav-label">Start</div>
@@ -37,7 +47,8 @@
         <a href="#l8" data-page="l8"><span class="num">08</span> Siamese networks</a>
         <a href="#l9" data-page="l9"><span class="num">09</span> Face attendance</a>
         <a href="#l10" data-page="l10"><span class="num">10</span> Medical images</a>
-        <a href="#l11" data-page="l11"><span class="num">11</span> The full recipe</a>
+        <a href="#l12" data-page="l12"><span class="num">11</span> Tumor masks</a>
+        <a href="#l11" data-page="l11"><span class="num">12</span> The full recipe</a>
       </div>
       <div class="nav-group">
         <div class="nav-label">Reference</div>
@@ -77,6 +88,7 @@
       <tr><td><code>siamese_network_tutorial.ipynb</code></td><td>Face verification by distance, not by class names.</td></tr>
       <tr><td><code>Face_Recognition_Based_Attendance.ipynb</code></td><td>Detect → embed → match. No training.</td></tr>
       <tr><td><code>Colab_Eye_Disease_Prediction.ipynb.html</code></td><td>Medical preprocess (cut off before training).</td></tr>
+      <tr><td><code>Tumor_prediction_with_image_Masks.ipynb</code></td><td>Brain MRI: paint every pixel with a mini U-Net + Dice.</td></tr>
       <tr><td><code>Defense_Multi_Agent_LLM_fast.ipynb</code></td><td>Not CV. Optional “systems around models” note at the end.</td></tr>
     </tbody>
   </table>
@@ -116,18 +128,23 @@
     <li><a href="#l8" data-page="l8"><h3>08 · “Are these the same person?”</h3><p>Shared encoder, contrastive loss, one-shot matching. Classes are the wrong tool here.</p><div class="src">siamese_network_tutorial.ipynb</div></a></li>
     <li><a href="#l9" data-page="l9"><h3>09 · Ship a recognizer</h3><p>SSD finds the face, ArcFace embeds it, cosine distance decides. You do not train.</p><div class="src">Face_Recognition_Based_Attendance.ipynb</div></a></li>
     <li><a href="#l10" data-page="l10"><h3>10 · Harder images: eyes</h3><p>Ordinal grades, imbalance, Ben Graham preprocess. Accuracy is a bad headline.</p><div class="src">Colab_Eye_Disease_Prediction.ipynb.html (prep only)</div></a></li>
-    <li><a href="#l11" data-page="l11"><h3>11 · Put the recipe together</h3><p>Which method to pick, which loss to compile, and a checklist for every new dataset.</p><div class="src">All files</div></a></li>
+    <li><a href="#l12" data-page="l12"><h3>11 · Paint every pixel: tumor masks</h3><p>The label is an image. Mini U-Net, skip connections, Dice. Accuracy will lie.</p><div class="src">Tumor_prediction_with_image_Masks.ipynb</div></a></li>
+    <li><a href="#l11" data-page="l11"><h3>12 · Put the recipe together</h3><p>Which method to pick, which loss to compile, and a checklist for every new dataset.</p><div class="src">All files</div></a></li>
   </ul>
 
-  <h2>Two kinds of computer vision in this folder</h2>
-  <div class="compare">
+  <h2>Three kinds of computer vision in this folder</h2>
+  <div class="compare compare-3">
     <div class="mini">
       <h4>Closed-set classification</h4>
-      <p>There is a fixed list of labels. The last layer is softmax (or sigmoid). Fashion-MNIST, MNIST, CIFAR, flowers, eye disease.</p>
+      <p>Fixed list of labels. Softmax or sigmoid. Fashion-MNIST, MNIST, CIFAR, flowers, eye disease.</p>
     </div>
     <div class="mini">
       <h4>Open comparison</h4>
-      <p>People (or objects) you never trained as classes. You learn or reuse an embedding, then compare distances. Siamese + attendance.</p>
+      <p>People you never trained as classes. Embeddings + distance. Siamese + attendance.</p>
+    </div>
+    <div class="mini">
+      <h4>Pixel maps</h4>
+      <p>The label is another image. Draw the tumor. U-Net + Dice on brain MRI.</p>
     </div>
   </div>
 
@@ -172,17 +189,18 @@
       <tr><td>Batch of those</td><td><code>(60000, 28, 28)</code></td><td>After <code>load_data()</code></td></tr>
       <tr><td>Same, for a CNN</td><td><code>(60000, 28, 28, 1)</code></td><td>After <code>reshape(..., 1)</code></td></tr>
       <tr><td>Color photo for MobileNet</td><td><code>(224, 224, 3)</code></td><td>Flowers transfer learning</td></tr>
+      <tr><td>MRI + tumor mask</td><td><code>(N, 128, 128, 1)</code> in <em>and</em> out</td><td>Tumor U-Net — labels are images</td></tr>
       <tr><td>CIFAR-10 image</td><td><code>(3, 32, 32)</code> in PyTorch</td><td>Channels-first by default</td></tr>
     </tbody>
   </table>
   <p>Keras Conv2D wants <code>(samples, height, width, channels)</code>. PyTorch often uses <code>(samples, channels, height, width)</code>. That is why the same idea looks like different numbers in two notebooks.</p>
 
-  <h2 id="l0-tasks">Four jobs people mix up</h2>
+  <h2 id="l0-tasks">Jobs people mix up</h2>
   <div class="grid-2">
     <div class="mini"><h4>Classification</h4><p>Assign one label from a list. “This is a 7.” “This is a tulip.” Most of your course.</p></div>
     <div class="mini"><h4>Detection</h4><p>Find <em>where</em>. The attendance notebook’s SSD draws a box around a face. It does not know the name.</p></div>
     <div class="mini"><h4>Recognition / verification</h4><p>Ask <em>who</em>, or “same person?”. Siamese + ArcFace.</p></div>
-    <div class="mini"><h4>Not in these files</h4><p>Segmentation (label every pixel), object tracking, 3D. You do not need them for this course.</p></div>
+    <div class="mini"><h4>Segmentation</h4><p>Label <em>every pixel</em>. White blob = tumor. The tumor-mask notebook. Not a box, not a class name.</p></div>
   </div>
 
   <h2 id="l0-data">The datasets you will actually touch</h2>
@@ -198,6 +216,7 @@
       <tr><td>AT&amp;T / ORL faces</td><td>400 gray faces, 40 people</td><td>08</td></tr>
       <tr><td>Your own gallery</td><td>Named photos + webcam</td><td>09</td></tr>
       <tr><td>APTOS-style fundus</td><td>~3.6k retina photos, 5 grades</td><td>10</td></tr>
+      <tr><td>LGG brain MRI + masks</td><td>3929 slice/mask pairs, 128×128</td><td>11</td></tr>
     </tbody>
   </table>
 
@@ -800,9 +819,97 @@ model.add(Dense(1, activation='sigmoid'))</code></pre>
   </div>
 </section>
 
+<!-- L12 tumor masks -->
+<section class="page" id="page-l12">
+  <div class="kicker">Lesson 11 · Tumor_prediction_with_image_Masks.ipynb</div>
+  <h1>Paint every pixel: brain MRI tumor masks</h1>
+  <p class="lede">Until now a label was a name, a number, or a distance. Here the label is <em>another image</em> the same size as the scan. White = tumor. Black = not tumor. The net must draw that map.</p>
+  <div class="from-file">Kaggle <code>mateuszbuda/lgg-mri-segmentation</code> — 3,929 FLAIR MRI slices with expert masks (LGG = lower-grade glioma). License CC-BY-NC-SA. Mini U-Net, Dice loss, 128×128 grayscale. This is a screening-style demo, not a diagnosis.</div>
+
+  <h2>Class name vs box vs mask</h2>
+  <table>
+    <thead><tr><th>Task</th><th>Question</th><th>Output</th><th>In this course</th></tr></thead>
+    <tbody>
+      <tr><td>Classification</td><td>What is this image?</td><td>One score / class</td><td>MNIST, flowers, eye grades</td></tr>
+      <tr><td>Detection</td><td>Where is it (roughly)?</td><td>A box</td><td>Face SSD in attendance</td></tr>
+      <tr><td>Grad-CAM</td><td>Where did a <em>classifier</em> look?</td><td>A heatmap, not a trained label</td><td>Flowers / DR</td></tr>
+      <tr><td>Semantic segmentation</td><td>What is every pixel?</td><td>An image-sized map</td><td><strong>This notebook</strong></td></tr>
+    </tbody>
+  </table>
+  <p>Grad-CAM guesses a region after you only trained “tumor / no tumor.” A mask is supervised: someone already drew the blob; the model must copy the drawing.</p>
+
+  <h2>The label is an image</h2>
+<pre><code>X, y = load_data("images", "masks")
+# X.shape  (3929, 128, 128, 1)  MRI
+# y.shape  (3929, 128, 128, 1)  mask  — not a vector of class ids</code></pre>
+  <p>Each mask file is named like the slice plus <code>_mask.tif</code>. Resize both to 128, divide by 255, add a channel. Check <code>cv2.imread</code> is not <code>None</code> before <code>resize</code> — the notebook’s only real comment exists because that crash already happened.</p>
+  <p>Resize masks with <strong>nearest neighbor</strong> if you redo this. The notebook uses default bilinear, which smears 0/1 edges into gray ghosts.</p>
+
+  <h2>U-Net: down, then up, with shortcuts</h2>
+  <p>A classification CNN shrinks the grid until a vector remains. That throws away <em>where</em>. U-Net (Ronneberger, 2015, biomedical) keeps where:</p>
+  <ol class="steps">
+    <li><strong>Encoder</strong> — conv + pool. “What is this?” Maps get smaller, channels grow.</li>
+    <li><strong>Bottleneck</strong> — the bottom of the U.</li>
+    <li><strong>Decoder</strong> — upsample back to full size so every pixel can get a label.</li>
+    <li><strong>Skip connections</strong> — copy encoder maps across and <code>concatenate</code> them. The decoder sees both deep context and sharp edges.</li>
+  </ol>
+  <p><code>Sequential</code> cannot do skips. Same Functional API idea as the Siamese net, different graph.</p>
+  <div class="arch">
+    <div class="arch-box">Input 128×128×1</div>
+    <div class="arch-arrow">↓ Conv 16, 16 · pool → 64×64</div>
+    <div class="arch-box">c1 saved for a skip</div>
+    <div class="arch-arrow">↓ Conv 32, 32 · pool → 32×32</div>
+    <div class="arch-box">c2 saved for a skip</div>
+    <div class="arch-arrow">↓ Conv 64 (bottleneck)</div>
+    <div class="arch-box wide">UpSample · concat c2 · Conv 32</div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-box wide">UpSample · concat c1 · Conv 16</div>
+    <div class="arch-arrow">↓ Conv2D(1, 1×1, sigmoid)</div>
+    <div class="arch-box out">Per-pixel P(tumor), then threshold 0.5</div>
+  </div>
+  <p>This is a <em>mini</em> U-Net: two down-levels, 16→32→64 channels, <code>UpSampling2D</code> instead of learned <code>Conv2DTranspose</code>, <code>padding='same'</code> so concat sizes match. The paper U-Net is deeper. The idea is the same.</p>
+
+  <h2>Dice, not accuracy</h2>
+  <div class="formula">Dice = 2 × |true ∩ pred| / (|true| + |pred|) &nbsp;&nbsp; · &nbsp;&nbsp; dice_loss = 1 − Dice</div>
+  <p>Tumors are tiny. A model that paints every pixel black can be ~99% accurate and still miss the tumor. Dice only scores overlap of the white blob. IoU (intersection over union) is the harsher cousin; this notebook does not log it.</p>
+  <div class="lab">
+    <h3>Lab · Dice vs accuracy</h3>
+    <div id="lab-dice"></div>
+  </div>
+<pre><code>def dice_loss(y_true, y_pred):
+    smooth = 1.
+    y_true_f = tf.reshape(y_true, [-1])
+    y_pred_f = tf.reshape(y_pred, [-1])
+    intersection = tf.reduce_sum(y_true_f * y_pred_f)
+    return 1 - (2. * intersection + smooth) / (
+        tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
+
+model.compile(optimizer="adam", loss=dice_loss, metrics=["accuracy"])
+model.fit(X_train, y_train, epochs=20, batch_size=8, validation_split=0.1)
+plt.imshow(pred[idx].squeeze() > 0.5, cmap="gray")</code></pre>
+
+  <div class="callout warn">
+    <h3>Read the failed run. It is the lesson.</h3>
+    <p>Saved training: val <strong>accuracy stuck ~0.988</strong>, val <strong>Dice loss stuck ~0.92</strong> (Dice ≈ 0.08). The net predicted background. That is the same cheat as “always No DR” in lesson 10, now at pixel scale. Do not celebrate 99% accuracy on masks. Log Dice (or IoU). Split by <strong>patient</strong>, not by slice, or neighboring cuts leak. Many slices have empty masks. Prefer <code>unzip -o</code> so Colab does not freeze on replace prompts.</p>
+  </div>
+
+  <h2>How this sits next to the eye notebook</h2>
+  <p>Eyes: classify a whole fundus into a severity grade, then Grad-CAM as a hint. Brains: if you <em>have</em> masks, train U-Net. If you only have image-level labels, you cannot honestly draw a tumor — only a heatmap.</p>
+  <p>If you extend the practical: augment image and mask <em>together</em>, add Dice as a metric, nearest-neighbor mask resize, maybe Dice+BCE, never present it as a clinical tool.</p>
+
+  <div class="quiz">
+    <h3>Check yourself</h3>
+    <div id="quiz-l12"></div>
+  </div>
+  <div class="pager">
+    <a class="btn" href="#l10" data-page="l10">Previous</a>
+    <button class="btn primary" data-mark="l12">Mark done · next</button>
+  </div>
+</section>
+
 <!-- L11 -->
 <section class="page" id="page-l11">
-  <div class="kicker">Lesson 11 · All files</div>
+  <div class="kicker">Lesson 12 · All files</div>
   <h1>The recipe you carry to a new dataset</h1>
   <p class="lede">If you can pick the right row in this page, you have finished the course that lives in this folder.</p>
 
@@ -813,6 +920,7 @@ model.add(Dense(1, activation='sigmoid'))</code></pre>
       <tr><td>Tiny gray icons, learning Keras</td><td>Flatten MLP, then a small CNN (lessons 02–03)</td></tr>
       <tr><td>Few thousand natural photos, 2–20 classes</td><td>Transfer learning + augmentation (lessons 05–06)</td></tr>
       <tr><td>Medical / unusual camera</td><td>Domain preprocess, then transfer, class weights, not raw accuracy (lesson 10)</td></tr>
+      <tr><td>Need the object’s outline / organ / tumor</td><td>Segmentation: U-Net, Dice/IoU, patient-level split (lesson 11)</td></tr>
       <tr><td>Identities that will grow over time</td><td>Embeddings + distance, not softmax over names (lessons 08–09)</td></tr>
       <tr><td>Need a box around something</td><td>A detector, then a specialist model on the crop (lesson 09)</td></tr>
     </tbody>
@@ -830,7 +938,7 @@ model.add(Dense(1, activation='sigmoid'))</code></pre>
     <li>Split so test never leaked. Stratify if classes are uneven.</li>
     <li>Preprocess that matches the backbone. Augment train only.</li>
     <li>Start simple: frozen pretrained net, or a small CNN if data is MNIST-like.</li>
-    <li>Compile the matching loss. Metric that matches the problem (accuracy vs F1 vs kappa).</li>
+    <li>Compile the matching loss. Metric that matches the problem (accuracy vs F1 vs kappa vs Dice).</li>
     <li>Callbacks: early stop on val, checkpoint best weights.</li>
     <li>Fine-tune last layers with a tiny LR if Phase 1 is healthy.</li>
     <li>Confusion matrix, per-class scores, a few mistakes, Grad-CAM if you need trust.</li>
@@ -850,20 +958,21 @@ model.compile(loss=..., optimizer=..., metrics=...)
 hist = model.fit(x, y, validation_split=0.2, callbacks=...)
 # 6 tell the truth
 model.evaluate(x_te, y_te)
-pred = np.argmax(model.predict(x_te), axis=-1)</code></pre>
+pred = np.argmax(model.predict(x_te), axis=-1)  # classification
+# masks: pred = model.predict(x_te) > 0.5</code></pre>
 
   <h2>Optional extra in the folder</h2>
   <p><code>Defense_Multi_Agent_LLM_fast.ipynb</code> is not computer vision. It is LangGraph + a local LLM: parallel specialist prompts, then a merge. Useful as “how you wrap models in a pipeline,” the same wrapping idea as Streamlit around attendance. Treat it as software architecture, not an operations system.</p>
 
   <h2>What this folder never taught (so you know the edge)</h2>
-  <p>Object detection training (YOLO and friends), segmentation, video, self-supervised pretraining, transformers for vision (ViT), proper identity-disjoint face protocols, calibration of FAR/FRR. You have the spine. Those are next courses, not holes in lesson 00–10.</p>
+  <p>Object detection <em>training</em> (YOLO and friends), video, self-supervised pretraining, transformers for vision (ViT), proper identity-disjoint face protocols, calibration of FAR/FRR. Segmentation is no longer a hole — the tumor notebook is that lesson. You have the spine.</p>
 
   <div class="quiz">
     <h3>Check yourself</h3>
     <div id="quiz-l11"></div>
   </div>
   <div class="pager">
-    <a class="btn" href="#l10" data-page="l10">Previous</a>
+    <a class="btn" href="#l12" data-page="l12">Previous</a>
     <button class="btn primary" data-mark="l11">Mark done · glossary</button>
   </div>
 </section>
@@ -895,11 +1004,14 @@ pred = np.argmax(model.predict(x_te), axis=-1)</code></pre>
     <dt>Feature map</dt><dd>The 2D output of one convolutional filter.</dd>
     <dt>Fine-tuning</dt><dd>Unfreeze upper backbone layers, tiny learning rate.</dd>
     <dt>Flatten</dt><dd>H×W becomes a vector. Drops spatial layout.</dd>
-    <dt>Functional API</dt><dd>Keras style that can have two inputs (Siamese) or a pretrained trunk + head (flowers).</dd>
+    <dt>Dice coefficient / Dice loss</dt><dd>Overlap of two blobs: 2 × intersection / (true + pred). Loss is 1 − Dice. Use this for tumor masks; pixel accuracy will lie.</dd>
+    <dt>Functional API</dt><dd>Keras style that can have two inputs (Siamese), a pretrained trunk + head (flowers), or skip concatenations (U-Net).</dd>
     <dt>Grad-CAM</dt><dd>Heatmap of which pixels drove a class score.</dd>
     <dt>ImageNet</dt><dd>Large labeled photo set. Source of MobileNet / EfficientNet weights.</dd>
     <dt>Logits</dt><dd>Raw scores before softmax. PyTorch CrossEntropyLoss wants these.</dd>
+    <dt>Mask (image)</dt><dd>A second image, same size as the input, that labels each pixel (tumor vs not). The target in the LGG MRI notebook.</dd>
     <dt>Max pooling</dt><dd>Downsample by keeping the max in a window.</dd>
+    <dt>IoU / Jaccard</dt><dd>Intersection over union of two masks. Same idea as Dice, slightly harsher. Not logged in the tumor notebook.</dd>
     <dt>Metric learning</dt><dd>Train a space where distance is the prediction (Siamese), not a class name.</dd>
     <dt>MobileNetV2</dt><dd>Small ImageNet CNN. Flowers notebook backbone. Input 224, preprocess to [−1, 1].</dd>
     <dt>One-hot</dt><dd>Class 6 → a 10-long vector with a 1 in slot 6.</dd>
@@ -911,6 +1023,7 @@ pred = np.argmax(model.predict(x_te), axis=-1)</code></pre>
     <dt>Quadratic weighted kappa</dt><dd>Agreement score that punishes far-off ordinal mistakes more. APTOS DR metric.</dd>
     <dt>ReLU</dt><dd>max(0, x). Hidden-layer default.</dd>
     <dt>Sequential</dt><dd>Linear stack of layers. Enough until Siamese / skip connections.</dd>
+    <dt>Semantic segmentation</dt><dd>Assign a class to every pixel. Tumor masks are binary segmentation.</dd>
     <dt>Siamese network</dt><dd>Two towers, shared weights, compare embeddings.</dd>
     <dt>Sigmoid</dt><dd>Maps one number to (0, 1). Binary last layer.</dd>
     <dt>Softmax</dt><dd>Maps K numbers to K probabilities that sum to 1.</dd>
@@ -918,6 +1031,8 @@ pred = np.argmax(model.predict(x_te), axis=-1)</code></pre>
     <dt>Stride</dt><dd>Step of a sliding window. Larger stride → smaller map.</dd>
     <dt>TF Hub</dt><dd>Library of pretrained layers. Used for IMDB text, not for the flower “tfh” duplicate file.</dd>
     <dt>Transfer learning</dt><dd>Reuse weights from a related large task.</dd>
+    <dt>U-Net</dt><dd>Encoder–decoder CNN with skip concatenations so you can label every pixel. Mini version in the tumor notebook.</dd>
+    <dt>UpSampling2D</dt><dd>Enlarge a feature map (usually 2×). U-Net decoder; no extra learned filters, unlike Conv2DTranspose.</dd>
     <dt>Validation split</dt><dd>Data used to choose epochs / hyperparameters. Not the final test set.</dd>
   </dl>
   <div class="pager">

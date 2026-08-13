@@ -1,10 +1,10 @@
 const PAGES = [
   "home", "map",
-  "l0", "l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10", "l11",
+  "l0", "l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10", "l12", "l11",
   "glossary"
 ];
 
-const LESSONS = ["l0","l1","l2","l3","l4","l5","l6","l7","l8","l9","l10","l11"];
+const LESSONS = ["l0","l1","l2","l3","l4","l5","l6","l7","l8","l9","l10","l12","l11"];
 const KEY = "cv-learn-done";
 
 function doneSet() {
@@ -79,7 +79,7 @@ const QUIZZES = {
   l0: [
     { q: "A grayscale pixel value of 0 usually means:", opts: ["White", "Black", "Red", "Transparent"], a: 1, e: "In typical image arrays, 0 is black and 255 is white." },
     { q: "An RGB image with height 28 and width 28 has shape:", opts: ["(28, 28)", "(28, 28, 1)", "(28, 28, 3)", "(3, 28)"], a: 2, e: "Color images have 3 channels: red, green, blue." },
-    { q: "Classification means:", opts: ["Drawing a box around an object", "Assigning a label/class", "Measuring distance between faces", "Removing noise"], a: 1, e: "Classification picks a class. Detection finds where. Recognition asks who." }
+    { q: "Classification means:", opts: ["Drawing a box around an object", "Assigning a label/class", "Measuring distance between faces", "Removing noise"], a: 1, e: "Classification picks a class. Detection finds where. Segmentation labels every pixel. Recognition asks who." }
   ],
   l1: [
     { q: "For diabetes yes/no, the output activation should be:", opts: ["softmax", "relu", "sigmoid", "tanh"], a: 2, e: "Sigmoid squashes one number into a probability between 0 and 1." },
@@ -130,9 +130,15 @@ const QUIZZES = {
     { q: "Grad-CAM is useful because:", opts: ["It trains faster", "It shows which image region drove the prediction", "It augments data", "It detects faces"], a: 1, e: "Doctors need to see that the model looked at lesions, not corners or text." },
     { q: "Quadratic weighted kappa cares about:", opts: ["Only exact accuracy", "How serious an off-by-one staging error is", "Learning rate only", "Batch size only"], a: 1, e: "Predicting Severe as Moderate is less bad than predicting Severe as Healthy." }
   ],
+  l12: [
+    { q: "In this tumor notebook, the label y is:", opts: ["A class name like “tumor”", "A bounding box", "An image-sized 0/1 mask", "A 512-D embedding"], a: 2, e: "Each pixel of y says tumor or not. Shape matches the MRI: (128, 128, 1)." },
+    { q: "U-Net skip connections exist so the decoder gets:", opts: ["A learning rate", "Both deep “what” and shallow “where”", "Softmax over 10 classes", "Face embeddings"], a: 1, e: "Encoder features are concatenated onto the upsampled map so tumor edges stay sharp." },
+    { q: "Val accuracy ~99% with Dice loss stuck high means:", opts: ["Perfect tumor outlines", "The model is mostly predicting background", "The dataset is empty", "Softmax is wrong"], a: 1, e: "Tumors are tiny. All-black masks score high accuracy and terrible Dice. Trust overlap, not accuracy." }
+  ],
   l11: [
     { q: "The usual vision pipeline order is:", opts: ["Predict → then normalize", "Load → inspect → normalize → model → train → evaluate", "Fine-tune before any data", "Augment the test set first"], a: 1, e: "Every practical in this folder follows that loop." },
-    { q: "If you have few images, first try:", opts: ["A huge CNN from scratch", "Transfer learning + augmentation", "Deleting validation", "Integer overflow"], a: 1, e: "That is why flowers, retinopathy, and many real CV tasks start from ImageNet backbones." }
+    { q: "If you have few images, first try:", opts: ["A huge CNN from scratch", "Transfer learning + augmentation", "Deleting validation", "Integer overflow"], a: 1, e: "That is why flowers, retinopathy, and many real CV tasks start from ImageNet backbones." },
+    { q: "Need a pixel-perfect tumor outline. You should train:", opts: ["Softmax over 10 clothes", "A U-Net with Dice loss on masks", "Only Grad-CAM on a classifier", "Cosine matching"], a: 1, e: "Masks need segmentation. Grad-CAM only explains a classifier; it is not a trained outline." }
   ]
 };
 
@@ -426,7 +432,7 @@ function initCosine() {
         <input type="range" id="ang2" min="0" max="360" value="35">
       </div>
     </div>
-    <canvas id="cos-canvas" width="360" height="220" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:8px;margin-top:0.6rem"></canvas>
+    <canvas id="cos-canvas" width="360" height="220" style="width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;margin-top:0.6rem"></canvas>
     <div class="out" id="cos-out"></div>
   `;
   const c = document.getElementById("cos-canvas");
@@ -442,17 +448,18 @@ function initCosine() {
     const dist = 1 - sim;
     const match = dist < 0.40;
     ctx.clearRect(0,0,360,220);
-    ctx.strokeStyle = "#d7ccb8";
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--line").trim() || "#d7ccb8";
     ctx.beginPath(); ctx.arc(180,110,80,0,Math.PI*2); ctx.stroke();
     const draw = (v, color) => {
       ctx.strokeStyle = color; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(180,110); ctx.lineTo(180+v[0]*80, 110-v[1]*80); ctx.stroke();
     };
-    draw(v1, "#b03a1e"); draw(v2, "#2c6b4a");
+    draw(v1, getComputedStyle(document.documentElement).getPropertyValue("--accent").trim());
+    draw(v2, getComputedStyle(document.documentElement).getPropertyValue("--ok").trim());
     document.getElementById("cos-out").innerHTML =
       `cosine similarity = <b>${sim.toFixed(3)}</b><br>
        cosine distance = <b>${dist.toFixed(3)}</b><br>
-       ${match ? "<b style='color:#2c6b4a'>MATCH</b> — mark attendance" : "<b style='color:#b03a1e'>NO MATCH</b> — unknown person"}`;
+       ${match ? "<b style='color:var(--ok)'>MATCH</b> — mark attendance" : "<b style='color:var(--accent)'>NO MATCH</b> — unknown person"}`;
   };
   box.addEventListener("input", upd);
   upd();
@@ -551,7 +558,8 @@ function initLossPicker() {
     { id: "sp", label: "Fashion-MNIST: labels are integers 0–9", loss: "sparse_categorical_crossentropy", act: "softmax, 10 units", why: "Ten exclusive classes. Labels stay as 9, 1, 0… no one-hot needed." },
     { id: "oh", label: "MNIST: labels converted with to_categorical", loss: "categorical_crossentropy", act: "softmax, 10 units", why: "Same 10-class problem, but labels are vectors like [0,0,0,0,0,0,1,0,0,0]." },
     { id: "pt", label: "CIFAR-10 in PyTorch", loss: "nn.CrossEntropyLoss", act: "raw logits, 10 units (no softmax)", why: "PyTorch CrossEntropyLoss applies log-softmax internally. Do not softmax first." },
-    { id: "si", label: "Siamese: same person vs different", loss: "contrastive loss", act: "distance between two embeddings", why: "Not a class head. Pull same identities together, push others past a margin." }
+    { id: "si", label: "Siamese: same person vs different", loss: "contrastive loss", act: "distance between two embeddings", why: "Not a class head. Pull same identities together, push others past a margin." },
+    { id: "seg", label: "Tumor masks: every pixel", loss: "dice_loss", act: "Conv2D 1×1 sigmoid, same H×W as the image", why: "The label is a mask. Dice cares about overlap of the tumor blob. Pixel accuracy will lie." }
   ];
   box.innerHTML = `
     <p>Pick the problem. The loss and last layer must match — this is the most common compile-time mistake across these notebooks.</p>
@@ -570,6 +578,95 @@ function initLossPicker() {
     btns.appendChild(b);
   });
   btns.querySelector("button").click();
+}
+
+function initDice() {
+  const box = document.getElementById("lab-dice");
+  if (!box) return;
+  const n = 6;
+  const gt = [
+    [0,0,0,0,0,0],
+    [0,1,1,1,0,0],
+    [0,1,1,1,0,0],
+    [0,0,1,1,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0]
+  ];
+  const pr = [
+    [0,0,0,0,0,0],
+    [0,0,1,1,0,0],
+    [0,1,1,1,0,0],
+    [0,1,1,0,0,0],
+    [0,0,0,0,0,0],
+    [0,0,0,0,0,0]
+  ];
+  box.innerHTML = `
+    <p>Click cells. White = tumor. Dice = 2 × overlap / (true tumor pixels + predicted tumor pixels). Same formula as <code>dice_loss = 1 − Dice</code> in the notebook.</p>
+    <div class="grid-2">
+      <div><strong>Ground-truth mask</strong><div class="grid-pixels" id="dice-gt"></div></div>
+      <div><strong>Predicted mask</strong><div class="grid-pixels" id="dice-pr"></div></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="dice-empty">Predict all background</button>
+      <button class="btn" id="dice-copy">Copy the truth</button>
+    </div>
+    <div class="out" id="dice-out"></div>
+  `;
+  const gtEl = document.getElementById("dice-gt");
+  const prEl = document.getElementById("dice-pr");
+  gtEl.style.gridTemplateColumns = prEl.style.gridTemplateColumns = `repeat(${n}, 28px)`;
+  function score() {
+    let inter = 0, a = 0, b = 0;
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      a += gt[r][c]; b += pr[r][c];
+      inter += gt[r][c] * pr[r][c];
+    }
+    const dice = (2 * inter) / Math.max(1, a + b);
+    const acc = 1 - ((a + b - 2 * inter) / (n * n));
+    document.getElementById("dice-out").innerHTML =
+      `overlap = <b>${inter}</b> · true = ${a} · pred = ${b}<br>
+       Dice = <b>${dice.toFixed(3)}</b> · dice_loss = <b>${(1 - dice).toFixed(3)}</b><br>
+       Pixel accuracy = <b>${(acc * 100).toFixed(1)}%</b>` +
+      (b === 0 ? `<br>All-background prediction: accuracy looks high, Dice is 0. That is the notebook’s failed run.` : "");
+  }
+  function draw() {
+    gtEl.innerHTML = ""; prEl.innerHTML = "";
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      const g = document.createElement("div");
+      g.className = "cell" + (gt[r][c] ? " on" : "");
+      g.onclick = () => { gt[r][c] = gt[r][c] ? 0 : 1; draw(); };
+      gtEl.appendChild(g);
+      const p = document.createElement("div");
+      p.className = "cell" + (pr[r][c] ? " on" : "");
+      p.onclick = () => { pr[r][c] = pr[r][c] ? 0 : 1; draw(); };
+      prEl.appendChild(p);
+    }
+    score();
+  }
+  document.getElementById("dice-empty").onclick = () => {
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) pr[r][c] = 0;
+    draw();
+  };
+  document.getElementById("dice-copy").onclick = () => {
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) pr[r][c] = gt[r][c];
+    draw();
+  };
+  draw();
+}
+
+function initTheme() {
+  const btn = document.getElementById("theme-btn");
+  const apply = (t) => {
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem("cv-theme", t);
+    if (btn) btn.textContent = t === "dark" ? "Light mode" : "Dark mode";
+  };
+  let t = localStorage.getItem("cv-theme");
+  if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  apply(t);
+  if (btn) btn.addEventListener("click", () => {
+    apply(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
 }
 
 function initNorm() {
@@ -598,6 +695,7 @@ function initNorm() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   renderQuizzes();
   initNeuron();
   initOneHot();
@@ -610,6 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCosine();
   initNorm();
   initLossPicker();
+  initDice();
   const menu = document.getElementById("menu-btn");
   const side = document.querySelector(".sidebar");
   if (menu && side) {

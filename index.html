@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Computer Vision from your practicals</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("cv-theme");
-        if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        var t = localStorage.getItem("cv-theme") || "dark";
         document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {}
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
     })();
   </script>
 </head>
@@ -22,12 +23,12 @@
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="eyebrow">Course companion</div>
+      <div class="eyebrow">Neural syllabus</div>
       <h1>Learn Computer Vision</h1>
       <p>From your subject files, start to finish.</p>
     </div>
     <button class="menu-btn" id="menu-btn" type="button">Menu</button>
-    <button class="btn theme-btn" id="theme-btn" type="button">Dark mode</button>
+    <button class="btn theme-btn" id="theme-btn" type="button">Day mode</button>
     <nav class="nav">
       <div class="nav-group">
         <div class="nav-label">Start</div>
@@ -38,7 +39,7 @@
       <div class="nav-group">
         <div class="nav-label">Lessons</div>
         <a href="#l0" data-page="l0"><span class="num">00</span> Images as numbers</a>
-        <a href="#l1" data-page="l1"><span class="num">01</span> First neural net</a>
+        <a href="#l1" data-page="l1"><span class="num">01</span> Deep neural net</a>
         <a href="#l2" data-page="l2"><span class="num">02</span> Classify with Flatten</a>
         <a href="#l3" data-page="l3"><span class="num">03</span> MLP vs CNN</a>
         <a href="#l4" data-page="l4"><span class="num">04</span> How convolution works</a>
@@ -68,11 +69,11 @@
 <section class="page" id="page-home">
   <div class="kicker">Your practicals, in order</div>
   <h1>Computer vision, from the first neuron to a working face system</h1>
-  <p class="lede">This site turns the notebooks in this folder into one path. Each lesson explains the idea in plain language, then shows the exact practical you already have, then lets you poke at it with a small interactive demo.</p>
+  <p class="lede">This site turns the notebooks in this folder into one path. Start with the theory of machine learning and deep neural nets. The practicals are examples of those ideas, not the ideas themselves.</p>
 
   <div class="callout">
     <h3>How to use this</h3>
-    <p>Read in order. If a word is new, open <a href="#theory" data-page="theory">Words &amp; theory</a> or search the glossary. Then do the lab and quiz.</p>
+    <p>Start at <a href="#theory" data-page="theory">Words &amp; theory</a> — including what a <strong>DNN</strong> is — then the numbered lessons. Labs are optional checks, not the main text. Search the glossary when a word is new.</p>
   </div>
 
   <h2>What is in your folder</h2>
@@ -80,7 +81,7 @@
   <table>
     <thead><tr><th>File</th><th>What it actually teaches</th></tr></thead>
     <tbody>
-      <tr><td><code>Deep_Neural_Network (1).ipynb</code></td><td>Keras loop on a table (diabetes). No images yet.</td></tr>
+      <tr><td><code>Deep_Neural_Network (1).ipynb</code></td><td>A feedforward DNN (MLP): stacked Dense layers on a table. No images yet.</td></tr>
       <tr><td><code>Deep_Learning_Image_Classification (1)(2)(3)</code></td><td>Same notebook three times: Fashion-MNIST with Flatten + Dense.</td></tr>
       <tr><td><code>01_Hand_written_Character_Recognition</code></td><td>MNIST twice: MLP, then the first real CNN.</td></tr>
       <tr><td><code>data_augmentation_comparison.ipynb</code></td><td>CIFAR-10 A/B test: same CNN, with vs without augmentation.</td></tr>
@@ -119,7 +120,7 @@
 
   <ul class="map-track">
     <li><a href="#l0" data-page="l0"><h3>00 · Images are grids of numbers</h3><p>Pixels, channels, shapes, and the difference between classify / detect / recognize.</p><div class="src">Foundation — not one notebook, needed by all of them</div></a></li>
-    <li><a href="#l1" data-page="l1"><h3>01 · A neural net with no pictures</h3><p>Sequential, Dense, ReLU, sigmoid, Adam, epochs. Get the Keras verbs right.</p><div class="src">Deep_Neural_Network (1).ipynb</div></a></li>
+    <li><a href="#l1" data-page="l1"><h3>01 · A deep neural net with no pictures</h3><p>What a DNN is: stacked Dense layers, ReLU, why depth, then the diabetes example.</p><div class="src">Deep_Neural_Network (1).ipynb</div></a></li>
     <li><a href="#l2" data-page="l2"><h3>02 · Treat an image as a long list</h3><p>Fashion-MNIST, /255, Flatten, softmax. Fast, but it throws the grid away.</p><div class="src">Deep_Learning_Image_Classification (1)(2)(3) — identical copies</div></a></li>
     <li><a href="#l3" data-page="l3"><h3>03 · Same digits, two models</h3><p>MNIST MLP vs CNN. One-hot, validation curves, 4D reshape. CNN wins (99% vs 97%).</p><div class="src">01_Hand_written_Character_Recognition (2).ipynb</div></a></li>
     <li><a href="#l4" data-page="l4"><h3>04 · What a filter actually does</h3><p>Convolution, padding, stride, pooling, dropout. The missing theory behind the CNN cells.</p><div class="src">Theory that the MNIST CNN assumes</div></a></li>
@@ -164,10 +165,11 @@
 <section class="page" id="page-theory">
   <div class="kicker">Before the notebooks</div>
   <h1>Every new word, in order</h1>
-  <p class="lede">Machine learning, neural nets, CNNs, then everything that sits on top of a CNN. Each word is one idea. The later lessons only show it in code.</p>
+  <p class="lede">Theory first. A CNN is one kind of deep neural net. Your diabetes notebook is another. The practicals come after you can say these ideas in your own words.</p>
   <div class="toc-mini">
     <a href="#th-ml">ML</a>
-    <a href="#th-train">How a net learns</a>
+    <a href="#th-dnn">DNN</a>
+    <a href="#th-train">How learning works</a>
     <a href="#th-cnn">CNN</a>
     <a href="#th-after">After CNN</a>
   </div>
@@ -179,65 +181,142 @@
     <div class="term"><h4>Deep learning (DL)</h4><p>ML that uses a <strong>neural network</strong> with several layers. Every notebook in your folder is this.</p></div>
     <div class="term"><h4>Computer vision (CV)</h4><p>The examples are <strong>images</strong>. What is it? Where is it? Who is it? Which pixels?</p></div>
   </div>
-  <p><strong>Supervised learning</strong> (this whole course): each example has a correct answer, the <strong>label</strong>. Features go in, label is what you want out.</p>
+  <p><strong>Supervised learning</strong> (this whole course): each example has a correct answer, the <strong>label</strong>. Features go in, label is what you want out. Unsupervised learning (clustering, no labels) is not in these files.</p>
   <table>
-    <thead><tr><th>Word</th><th>In one breath</th><th>Your files</th></tr></thead>
+    <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
     <tbody>
-      <tr><td>Feature</td><td>What the model sees</td><td>Glucose; a pixel; later an embedding</td></tr>
-      <tr><td>Label y</td><td>The answer</td><td>0/1 diabetes; class 9; a tumor mask</td></tr>
-      <tr><td>Model</td><td>The stack of layers + learned weights</td><td><code>Sequential</code> / U-Net</td></tr>
-      <tr><td>Prediction</td><td>The current guess</td><td><code>model.predict</code></td></tr>
+      <tr><td>Feature</td><td>What the model sees: glucose, a pixel, later an embedding</td></tr>
+      <tr><td>Label y</td><td>The answer: 0/1, class 9, or a tumor mask</td></tr>
+      <tr><td>Hypothesis / model</td><td>A function with knobs (weights). Training turns the knobs</td></tr>
+      <tr><td>Generalization</td><td>Doing well on <em>new</em> examples, not only the ones used to fit</td></tr>
     </tbody>
   </table>
 
-  <h2 id="th-train">2. How a neural net learns</h2>
-  <p>A <strong>neuron</strong> does <code>z = w·x + b</code>, then an <strong>activation</strong> (ReLU, sigmoid, softmax). A <strong>layer</strong> is many neurons. <strong>Weights</strong> and <strong>bias</strong> are the knobs training turns.</p>
-  <ol class="steps">
-    <li>Forward: data flows through layers → a prediction.</li>
-    <li><strong>Loss</strong> measures “how wrong” (not always a percent).</li>
-    <li><strong>Backpropagation</strong> sends that error backward so every weight gets a <strong>gradient</strong> (“nudge me this way”).</li>
-    <li>The <strong>optimizer</strong> (usually <strong>Adam</strong>) takes a step of size <strong>learning rate</strong>.</li>
-    <li>Repeat on the next <strong>batch</strong>. One full pass over train data = one <strong>epoch</strong>.</li>
-  </ol>
-  <p>Keras hides steps 3–4 inside <code>fit()</code>. <code>compile(loss=..., optimizer=..., metrics=...)</code> only <em>chooses</em> them. A <strong>metric</strong> (accuracy, Dice) is a score you watch; it does not update weights unless it is also the loss.</p>
-  <div class="compare">
-    <div class="mini"><h4>Overfitting</h4><p>Great on train, worse on val/test. Memorized homework, failed the exam. Fix with dropout, augmentation, early stop, more data.</p></div>
-    <div class="mini"><h4>Underfitting</h4><p>Bad on train and test. Too simple or not trained long enough.</p></div>
+  <h2 id="th-dnn">2. DNN — Deep Neural Network</h2>
+  <p>Yes — the course starts with a DNN, and almost everything later is still a DNN with a different layer type.</p>
+  <p>A <strong>neural network</strong> is layers of simple units. Each unit computes a weighted sum, then a curve (the <strong>activation</strong>). <strong>Deep</strong> means more than one hidden layer between input and output. Your file <code>Deep_Neural_Network (1).ipynb</code> is that idea with no images: a stack of Dense layers on eight medical numbers.</p>
+  <div class="arch">
+    <div class="arch-box">Input features (table row, or flattened pixels)</div>
+    <div class="arch-arrow">↓ hidden layer 1 (ReLU)</div>
+    <div class="arch-box">new representation — mixes of the inputs</div>
+    <div class="arch-arrow">↓ hidden layer 2, 3, … (ReLU)</div>
+    <div class="arch-box">richer mixes (this is the “deep” part)</div>
+    <div class="arch-arrow">↓ output layer</div>
+    <div class="arch-box out">sigmoid (yes/no) or softmax (which class)</div>
   </div>
-  <p><strong>Train / validation / test:</strong> train fits weights. Val is the practice exam during training. Test is the real exam once. Never train on test.</p>
-
-  <h2 id="th-cnn">3. CNN — Convolutional Neural Network</h2>
-  <p>A CNN is still a neural net. The new idea is <strong>convolution</strong>: a small <strong>kernel</strong> (often 3×3) slides over the image. At each stop it multiplies, adds, and writes one number into a <strong>feature map</strong>.</p>
-  <div class="term-grid">
-    <div class="term"><h4>Why not Flatten + Dense?</h4><p>Flatten makes a long list. Neighbor pixels are no longer neighbors. A Dense net does not “see” an edge as an edge.</p></div>
-    <div class="term"><h4>Local connectivity</h4><p>Each conv neuron looks only at a small neighborhood — how pictures are built.</p></div>
-    <div class="term"><h4>Weight sharing</h4><p>The same 3×3 is reused everywhere. “Vertical edge” costs 9 weights, not a new set per pixel.</p></div>
-    <div class="term"><h4>Feature hierarchy</h4><p>Early filters: edges. Deeper: parts (a loop of an 8, an eye). You do not draw them; training writes them.</p></div>
-    <div class="term"><h4>Stride</h4><p>Jump size. 1 = scan every pixel. 2 = skip; the map shrinks faster.</p></div>
-    <div class="term"><h4>Padding</h4><p><code>valid</code> = no extra border (28→26 with 3×3). <code>same</code> = pad so size stays when stride is 1.</p></div>
-    <div class="term"><h4>Pooling</h4><p>Max 2×2 keeps the strongest value in each block. Smaller maps, a little shift-tolerance.</p></div>
-    <div class="term"><h4>Receptive field</h4><p>How much of the original photo one deep number can “see.” Grows as you conv and pool.</p></div>
-  </div>
-  <p>Lesson 04 has clickable labs for kernel, output size, and pooling. Lesson 03 is the same MNIST digits as an MLP then as a CNN — CNN wins.</p>
-
-  <h2 id="th-after">4. After a basic CNN</h2>
-  <p>Once conv + pool + Dense works, the rest of the folder is <em>better training</em> and <em>new output types</em>.</p>
+  <h3>DNN is the family name</h3>
+  <p>People say “DNN,” “deep net,” and “MLP” as if they were different products. In this course they nest:</p>
+  <ul>
+    <li><strong>Neural net</strong> — at least one layer of neurons with learned weights.</li>
+    <li><strong>MLP</strong> (multilayer perceptron) — a neural net whose hidden layers are all <strong>Dense</strong> (every unit sees every previous value). Diabetes, Fashion-MNIST, and MNIST part A are MLPs.</li>
+    <li><strong>DNN</strong> — a neural net with several hidden layers. An MLP with depth is a DNN. A CNN with depth is also a DNN. So is U-Net. “Deep” describes <em>how many stages of mixing</em>, not “must be convolution.”</li>
+  </ul>
+  <p>A <strong>CNN is a DNN whose hidden layers are mostly convolutions</strong> instead of Dense. A <strong>Siamese</strong> net is two copies of the same DNN with shared weights. <strong>U-Net</strong> is a DNN with an encoder that shrinks the grid and a decoder that grows it back.</p>
   <table>
-    <thead><tr><th>Idea</th><th>In one breath</th><th>Lesson</th></tr></thead>
+    <thead><tr><th>Kind of DNN</th><th>What is special</th><th>In your folder</th></tr></thead>
     <tbody>
-      <tr><td>Dropout</td><td>Randomly turn neurons off while training so the net cannot cling to one path</td><td>03, 05</td></tr>
-      <tr><td>Augmentation</td><td>Flip/crop train images. Same label. Never warp the test set</td><td>05</td></tr>
-      <tr><td>BatchNorm</td><td>Keep layer values on a stable scale</td><td>05, 06</td></tr>
-      <tr><td>Transfer learning</td><td>Reuse ImageNet filters. Freeze, train a head, then fine-tune slowly</td><td>06</td></tr>
-      <tr><td>Embedding</td><td>Turn an image (or sentence) into a vector. Nearby = similar</td><td>07–09</td></tr>
-      <tr><td>Siamese + contrastive</td><td>Two shared towers. Pull same faces close; push others past a margin</td><td>08</td></tr>
-      <tr><td>Detect vs recognize</td><td>Box (SSD) is not a name (ArcFace + cosine)</td><td>09</td></tr>
-      <tr><td>Imbalance / kappa</td><td>Accuracy lies if one class dominates. Use weights, F1, kappa</td><td>10</td></tr>
-      <tr><td>Segmentation / U-Net / Dice</td><td>Label every pixel. Skip connections keep “where.” Dice = overlap, not accuracy</td><td>11</td></tr>
-      <tr><td>Grad-CAM</td><td>Heatmap of where a <em>classifier</em> looked. Not a trained mask</td><td>06, 10</td></tr>
+      <tr><td>MLP (Dense stack)</td><td>Fully connected hidden layers</td><td>Diabetes; Fashion-MNIST; MNIST part A</td></tr>
+      <tr><td>CNN</td><td>Conv + pool, then often Dense</td><td>MNIST part B; CIFAR; flowers backbone</td></tr>
+      <tr><td>Siamese</td><td>Two copies of the same DNN</td><td>Face verification</td></tr>
+      <tr><td>U-Net</td><td>CNN down + CNN up + skips</td><td>Tumor masks</td></tr>
     </tbody>
   </table>
-  <p>Search every definition: <a href="#glossary" data-page="glossary">glossary</a>.</p>
+  <h3>Why you need a nonlinear activation</h3>
+  <p>A Dense layer without an activation is a linear map: output = Wx + b. Stack two of those and you still have one linear map, because W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂). The extra layer bought you nothing new: you can still only draw a hyperplane.</p>
+  <p>An activation after each hidden layer <em>bends</em> the space. ReLU folds negatives to zero. After that fold, the next linear map can cut the space in a new way. Many folds stacked together can carve complicated regions — “high glucose <em>and</em> high BMI,” or “a loop that looks like an 8.”</p>
+  <h3>Why stack layers at all? (depth vs width)</h3>
+  <p>A famous theorem says a single hidden layer, if you make it wide enough, can approximate many functions. So why go deep?</p>
+  <p><strong>Depth is a bet that the world is hierarchical.</strong> Layer 1 learns cheap local facts. Layer 2 reuses those facts as parts. Layer 3 reuses parts as objects. That reuse is why a deep net can express some functions with far fewer weights than a huge shallow net. Vision is the textbook hierarchy (edges → parts → objects). The diabetes net is a smaller version of the same idea: combinations of combinations.</p>
+  <p><strong>Width</strong> is how many neurons sit in one layer (how many different patterns that stage can hold). <strong>Depth</strong> is how many stages of recombination you allow. Too little of either: underfitting. Too much: the net can memorize the training set (overfitting). The diabetes notebook’s 12 → 20 → 20 → 22 units is an arbitrary small capacity, not a law of nature.</p>
+  <h3>Feedforward vs other nets</h3>
+  <p>These notebooks are <strong>feedforward</strong>: information goes input → hidden → output, no loops in time. Recurrent nets (for sequences) and transformers are not in this folder. Residual skip connections (U-Net) are still feedforward: they copy a tensor sideways; they do not cycle.</p>
+  <h3>Inductive bias (what the architecture assumes)</h3>
+  <p>An <strong>inductive bias</strong> is the assumption baked into the architecture before you see data. Training only searches among functions the architecture can represent.</p>
+  <ul>
+    <li><strong>MLP:</strong> “Any input can mix with any other.” Fine for a table of eight numbers. Wasteful for a photo, because it does not know that nearby pixels belong together, or that an edge on the left is the same pattern as an edge on the right.</li>
+    <li><strong>CNN:</strong> “Patterns are local, and the same pattern can appear anywhere.” That is why CNNs win on images.</li>
+    <li><strong>U-Net:</strong> “Where something is matters as much as what it is,” so high-resolution maps must be copied into the decoder.</li>
+    <li><strong>Siamese:</strong> “Identity is a distance in a vector space, not a slot in a fixed class list.”</li>
+  </ul>
+  <h3>Why ReLU made deep nets practical</h3>
+  <p>Older nets used sigmoid in <em>every</em> layer. Sigmoid saturates (flat near 0 and 1). In the flat region the derivative is almost zero. Multiply many almost-zeros (one per layer) and the gradient at the first layers vanishes — <strong>vanishing gradients</strong>. Those layers barely learn; depth becomes a liability.</p>
+  <p>ReLU is linear for positives, derivative 1, so the signal can travel many layers. That is why hidden layers here are ReLU, and only the <em>last</em> layer uses sigmoid or softmax (you want a probability there, not a ReLU that can be 17).</p>
+  <p>The opposite problem is <strong>exploding gradients</strong>: products of large derivatives blow up, weights jump, loss becomes NaN. BatchNorm, careful initialization, and clipping are later tools against that. These notebooks mostly dodge it by staying small and using Adam + ReLU.</p>
+  <h3>What the output layer is allowed to mean</h3>
+  <p>The last layer is not “another hidden layer.” It is a claim about the kind of answer you want.</p>
+  <ul>
+    <li>One number in (0,1) → <strong>sigmoid</strong> + binary crossentropy (diabetes, IMDB, each tumor pixel independently).</li>
+    <li>K exclusive classes → <strong>softmax</strong> + (sparse) categorical crossentropy (clothes, digits, flowers). Softmax forces the K numbers to be probabilities that sum to 1: you cannot be “90% boot and 90% sandal.”</li>
+    <li>A distance between two embeddings → no class head; contrastive loss (Siamese). The theory changed: you are not naming a class, you are arranging a space.</li>
+  </ul>
+  <p>The last layer and the loss are a pair. Mixing them (softmax with binary crossentropy, or sigmoid with 10 exclusive classes) is the most common compile mistake, and it is a theory mistake, not a typing mistake.</p>
+
+  <h2 id="th-train">3. How learning works (theory)</h2>
+  <p>A DNN is a function with millions of knobs (weights). Training is optimization: pick knobs that make a <strong>loss</strong> small on the training set, hoping the same knobs work on new data. Nothing in this step is special to images. The diabetes DNN and a CNN use the same story.</p>
+  <h3>Forward pass</h3>
+  <p>An example enters. Each layer transforms it. You get a prediction ŷ. No weights change yet. The network is just a composed function: ŷ = f_L(f_{L−1}(…f₁(x)…)).</p>
+  <h3>Loss (the thing that is actually minimized)</h3>
+  <p>You need a number that is small when ŷ matches y, and large when it does not. That number is the loss. Gradient descent only “sees” the loss, not accuracy.</p>
+  <p><strong>Cross-entropy</strong> (binary or categorical) is negative log-likelihood of the true class under the model’s probabilities. It punishes a confident wrong probability more than a shy wrong one. If the true class is “boot” and you said 0.99 “trouser,” the loss is large. If you said 0.4 “boot,” it is smaller. That is why we output probabilities during training, not just a hard class.</p>
+  <p>Why not mean squared error for classification? MSE treats “I said 0.6, truth is 1” as a numeric miss. Cross-entropy treats it as “you assigned too little probability to the true class,” which matches the softmax/sigmoid story and usually trains cleaner classifiers. MSE is a natural loss when the target is a real number, not a class.</p>
+  <p><strong>Dice loss</strong> is different again: it cares about overlap of two blobs, not “how many pixels were correct.” Use it when the positive region is tiny. Same principle: the loss must match the meaning of the output.</p>
+  <p>A <strong>metric</strong> (accuracy, F1, kappa, Dice coefficient) is a human-readable score. Gradient descent does not follow accuracy unless you make accuracy the loss (almost nobody does — accuracy is not a smooth function of the weights).</p>
+  <h3>Gradient and backpropagation</h3>
+  <p>A <strong>gradient</strong> of the loss with respect to a weight is: “if I increase this weight a little, does loss go up or down, and how fast?” You move the weight a small step the downhill way. <strong>Learning rate</strong> is the step size. Too large: loss explodes or jumps over the minimum. Too small: training crawls.</p>
+  <p><strong>Backpropagation</strong> is the chain rule applied layer by layer from the output back to the input. Because ŷ is a composition of layers, the derivative of loss w.r.t. an early weight factors as (how loss depends on the next layer) × (how that layer depends on this one). The last layer’s error is easy. That error is multiplied by each layer’s local derivative to get the previous layer’s error. That is why vanishing gradients hurt: a chain of tiny local derivatives makes the product ~0.</p>
+  <p>Keras <code>fit()</code> runs this automatically. You still have to choose a loss that means the right thing, or backprop will faithfully minimize the wrong objective.</p>
+  <p><strong>Adam</strong> is an optimizer that keeps a running average of gradients and of their squares, so each weight gets its own effective step size. You can think of it as “smarter SGD.” SGD itself is: take one (or a batch of) example(s), compute the gradient, step. The loss surface of a DNN is not a bowl — it is non-convex, with many saddles. In practice Adam + ReLU + a sensible learning rate finds a useful region; you are not proving a unique minimum.</p>
+  <h3>Why batches</h3>
+  <p>The true gradient would average over the whole training set (slow, RAM-heavy). A <strong>mini-batch</strong> is a noisy but cheap estimate. Noise can even help escape bad regions. <strong>Epoch</strong> = how many times the full set was seen. More epochs ≠ always better (overfitting). Batch size is a trade: large batches → smoother, more “true” gradient, often need a larger learning rate; small batches → noisier, more updates per epoch.</p>
+  <h3>Bias–variance in this language</h3>
+  <p><strong>Underfit</strong> (high bias): the net is too simple or under-trained; train and test both poor. <strong>Overfit</strong> (high variance): train looks great, val/test worse; the net memorized quirks. Depth and extra neurons increase <strong>capacity</strong> (the size of the function class) — easier to overfit. Regularization (dropout, augmentation, weight decay, early stopping) reduces that extra freedom so the hypothesis you pick is simpler in a useful sense.</p>
+  <p><strong>Validation</strong> is the set you watch to decide when to stop and which idea won. <strong>Test</strong> is used once. If you keep peeking at test while changing the model, it becomes a second validation set and you fool yourself about generalization.</p>
+
+  <h2 id="th-cnn">4. CNN theory (in more depth)</h2>
+  <p>A CNN is still a DNN. The change is the <em>kind</em> of hidden layer. Pictures have a grid: nearby pixels belong together, and the same pattern (an edge) can appear anywhere. Dense layers ignore both facts.</p>
+  <h3>The convolution operation</h3>
+  <p>A <strong>kernel</strong> is a tiny weight matrix, usually 3×3. You place it on the image, multiply overlapping numbers, add them (plus a bias). That sum is one cell of a <strong>feature map</strong>. Then you slide the kernel by the <strong>stride</strong> and repeat. Training learns the 9 (or more) numbers; you do not draw “this is an edge detector” by hand, though early filters often look like edges.</p>
+  <p>Output width (one side), for kernel size k, padding p, stride s:</p>
+  <div class="formula">out = floor( (in + 2p − k) / s ) + 1</div>
+  <p><code>valid</code> padding means p = 0, so a 3×3 on 28×28 becomes 26×26. <code>same</code> padding chooses p so that, with stride 1, out = in. Edge pixels would otherwise be used less often than the center; padding also lets the kernel sit on the border.</p>
+  <h3>Two theoretical reasons CNNs win on images</h3>
+  <p><strong>Sparse (local) connections.</strong> A Dense neuron on 28×28 sees 784 inputs. A conv neuron sees 9. Images are locally smooth: an edge is a local event. You should not need every pixel to detect a short line.</p>
+  <p><strong>Tied weights (sharing).</strong> The same 9 weights are used at every location. Equivariance: if you shift the object, the feature map shifts too. A Dense net would have to relearn “edge” in every position separately — a waste of parameters and a worse inductive bias.</p>
+  <h3>Many filters and depth</h3>
+  <p>One kernel = one pattern = one feature map. <code>Conv2D(32)</code> is 32 different kernels, 32 maps stacked as channels. The next convolution looks at a 3×3 patch <em>across all 32 channels at once</em>, so it can combine “vertical edge in this map” with “dark blob in that map.”</p>
+  <p><strong>Hierarchy:</strong> after pooling, each cell sees a larger <strong>receptive field</strong> of the original image. Layer 1: local edges. Layer 2: corners, loops. Deeper: object parts. Classification then only needs a vector (Flatten or global average pool) and a Dense/softmax head.</p>
+  <h3>Equivariance, then a little invariance</h3>
+  <p>Tied weights give <strong>translation equivariance</strong>: shift the cat, the feature map shifts. Classification usually wants <strong>invariance</strong>: the label “cat” should not change if the cat moved. Pooling (and later, seeing the object in many positions during training) is how you go from “the pattern moved” to “it is still a cat.” They are not the same property.</p>
+  <h3>Pooling</h3>
+  <p>Max pooling 2×2 with stride 2: keep the largest value in each 2×2. The map halves. Theory: (1) fewer spatial positions → cheaper Dense tail; (2) a little invariance to tiny shifts (“the edge is somewhere in this 2×2”). Average pooling exists; these notebooks use max. You can also downsample with stride-2 convolution instead of pool; CIFAR’s blocks still pool.</p>
+  <p>Labs for kernel, size formula, and pooling are in lesson 04. Lesson 03 is the experiment: same digits, MLP vs CNN.</p>
+
+  <h2 id="th-after">5. Theory after a basic CNN</h2>
+  <p>Once you can classify with conv + pool + Dense, four extra ideas appear. They are not “more Keras verbs.” They are different <em>theories of what the network is for</em>.</p>
+  <h3>Regularization (keep generalization)</h3>
+  <p><strong>Dropout:</strong> at train time, randomly zero some neurons. The net cannot rely on one co-adapted clique. At test time all neurons are on (scaled). <strong>Augmentation:</strong> the true data distribution includes flips and lighting changes; showing warped copies is a prior that “this still has the same label.” <strong>Weight decay</strong> (AdamW) prefers smaller weights, a smoother function. <strong>Early stopping</strong> treats “val just got worse” as “stop before memorization.”</p>
+  <h3>Transfer learning (reuse a function you cannot afford to learn)</h3>
+  <p>ImageNet trained a CNN to distinguish 1000 object classes. Early filters (edges, color blobs) transfer to flowers and fundi. Theory: low-level visual statistics are shared; high-level class heads are not. So you <strong>freeze</strong> the backbone (feature extraction), train a small new head, then optionally <strong>fine-tune</strong> the last blocks with a tiny learning rate so you do not wash out the pretrained solution (catastrophic forgetting). <code>include_top=False</code> throws away the 1000-way head. Match <code>preprocess_input</code> or the features are in the wrong numeric world. Grad-CAM asks which pixels the <em>classifier</em> used; it is explanation, not a mask you trained.</p>
+  <h3>Embeddings and metric learning (stop using class names)</h3>
+  <p>Softmax assumes a <em>fixed</em> list of classes. People are not a fixed list. An <strong>embedding</strong> is a vector such that distance ≈ meaning. A <strong>Siamese</strong> net is two copies of the same DNN with shared weights; contrastive loss pulls same-identity pairs together and pushes others beyond a margin. At test time you only compare distances (cosine if vectors are length 1). Detection (a box) is a different question from recognition (a name).</p>
+  <h3>Pixel-wise prediction (segmentation)</h3>
+  <p>Classification throws away where. To draw a tumor you need an output tensor the same size as the input. A plain CNN encoder shrinks the grid; a <strong>decoder</strong> must grow it back. <strong>Skip connections</strong> copy high-resolution encoder maps into the decoder so edges are not invented from a tiny bottleneck. That U-shape is U-Net. <strong>Dice</strong> is the right objective when positives are rare: accuracy of “all background” is ~99% and useless.</p>
+  <p>Search any leftover word in the <a href="#glossary" data-page="glossary">glossary</a>. Then the numbered lessons show the same ideas in the notebooks — they are examples, not the theory itself.</p>
+  <table>
+    <thead><tr><th>Idea</th><th>Theory in one line</th><th>Lesson</th></tr></thead>
+    <tbody>
+      <tr><td>Dropout</td><td>Break co-adapted cliques so the function cannot depend on one path</td><td>03, 05</td></tr>
+      <tr><td>Augmentation</td><td>The label is invariant to some warps; show those warps</td><td>05</td></tr>
+      <tr><td>BatchNorm</td><td>Keep layer values on a stable scale so gradients stay usable</td><td>05, 06</td></tr>
+      <tr><td>Transfer learning</td><td>Low-level vision is shared; reuse it instead of rediscovering edges</td><td>06</td></tr>
+      <tr><td>Embedding</td><td>Meaning is geometry: nearby vectors, similar things</td><td>07–09</td></tr>
+      <tr><td>Siamese + contrastive</td><td>Identity is a distance, not a class slot</td><td>08</td></tr>
+      <tr><td>Detect vs recognize</td><td>Where (a box) is a different question from who (a name)</td><td>09</td></tr>
+      <tr><td>Imbalance / kappa</td><td>Accuracy can be high while the rare class is ignored</td><td>10</td></tr>
+      <tr><td>Segmentation / U-Net / Dice</td><td>The label is a map; overlap is the objective</td><td>11</td></tr>
+      <tr><td>Grad-CAM</td><td>Explanation of a classifier, not a trained mask</td><td>06, 10</td></tr>
+    </tbody>
+  </table>
 
   <div class="quiz">
     <h3>Check yourself</h3>
@@ -323,34 +402,37 @@
 <!-- L1 -->
 <section class="page" id="page-l1">
   <div class="kicker">Lesson 01 · Deep_Neural_Network (1).ipynb</div>
-  <h1>A neural net before any images</h1>
-  <p class="lede">This practical is not computer vision. That is the point. It teaches the Keras verbs on a small table so later notebooks can reuse them on pixels.</p>
-  <div class="from-file">From the notebook: 768 people, 8 medical numbers, one yes/no label called <code>Outcome</code>.</div>
+  <h1>A deep neural net before any images</h1>
+  <p class="lede">This file is the course’s first DNN: a feedforward stack of Dense layers. It is not computer vision. That is the point. The same theory — layers, activations, loss, backprop — is reused on pixels later. The diabetes table is only the example.</p>
+  <p>Read <a href="#theory" data-page="theory">Words &amp; theory</a> (section 2–3) first if the words “DNN,” “ReLU,” or “loss vs metric” are still fuzzy. This lesson retells that theory with one concrete architecture.</p>
 
-  <h2>What a Dense layer does</h2>
-  <p>A <strong>neuron</strong> takes inputs, multiplies each by a <strong>weight</strong>, adds a <strong>bias</strong>, then applies an <strong>activation</strong>.</p>
+  <h2>What a DNN is doing</h2>
+  <p>You have inputs x (here: eight numbers about a person) and a label y (here: diabetes yes/no). You do not write a medical rule. You write a <strong>parameterized function</strong> ŷ = f(x; weights) and you search for weights that make ŷ close to y on many examples.</p>
+  <p>Each <strong>neuron</strong> is the same tiny calculator:</p>
   <div class="formula">z = w1·x1 + w2·x2 + … + b &nbsp;&nbsp; then &nbsp;&nbsp; y = activation(z)</div>
-  <p><strong>Dense</strong> means every neuron in this layer sees every value from the previous layer. Fully connected. Easy to understand. Bad for raw images later, because it ignores that nearby pixels belong together.</p>
-  <p><strong>Sequential</strong> means you stack layers in a line. Data flows left → right. The diabetes model is only Dense layers.</p>
+  <p>A <strong>Dense</strong> (fully connected) layer is a bank of such neurons. Every neuron sees every value from the previous layer. That is the MLP inductive bias: any feature may interact with any other. For eight medical numbers that is reasonable. For a 28×28 photo it is wasteful — you would be mixing the top-left pixel with the bottom-right as freely as with its neighbor.</p>
+  <p><strong>Deep</strong> means you stack several of those layers. Layer 1 builds simple mixes of the raw inputs. Layer 2 mixes those mixes. You never name the mixes; training discovers them. Without a nonlinear activation between layers, the stack would collapse to one linear map (see theory: composition of linear maps is linear).</p>
 
   <div class="lab">
     <h3>Lab · one neuron</h3>
     <div id="lab-neuron"></div>
   </div>
 
-  <h2>Activations in this notebook</h2>
+  <h2>Why these two activations</h2>
   <div class="compare">
     <div class="mini">
       <h4>ReLU on hidden layers</h4>
-      <p><code>max(0, z)</code>. If the weighted sum is negative, the neuron stays quiet. If positive, it passes the number through. Default choice for hidden layers in every notebook here.</p>
+      <p><code>max(0, z)</code>. Negatives are silenced; positives pass through. The derivative is 0 or 1, so gradients do not shrink the way they do with sigmoid-in-every-layer (vanishing gradients). Default hidden activation in every notebook here.</p>
     </div>
     <div class="mini">
       <h4>Sigmoid on the last layer</h4>
-      <p>Squishes one number into a probability between 0 and 1. Perfect for diabetes yes/no. Not for 10 clothing classes — those need softmax (next lesson).</p>
+      <p>One number squeezed into (0, 1): a probability of “yes.” Correct for a binary label. Wrong for 10 exclusive clothing classes — those need softmax, because you need K probabilities that sum to 1, not one independent yes/no.</p>
     </div>
   </div>
+  <p>The last layer is a claim about the <em>kind of answer</em>. Hidden layers are representation; the output layer is the interface to the loss.</p>
 
-  <h2>The architecture they built</h2>
+  <h2>The example architecture (diabetes DNN)</h2>
+  <div class="from-file">From the notebook: 768 people, 8 medical numbers, one yes/no label called <code>Outcome</code>. This is an MLP — a DNN made only of Dense layers.</div>
   <div class="arch">
     <div class="arch-box">8 inputs (pregnancies, glucose, BMI, …)</div>
     <div class="arch-arrow">↓ Dense 12, ReLU</div>
@@ -364,47 +446,37 @@
     <div class="arch-arrow">↓ Dense 1, sigmoid</div>
     <div class="arch-box out">P(diabetes) between 0 and 1</div>
   </div>
+  <p>The widths 12, 20, 20, 22 are not derived from a theorem. They are a small capacity: enough to mix features, not so huge that 768 rows are trivially memorized. A different table could use different widths. What matters theoretically is: several hidden ReLU layers, then a sigmoid that matches a binary loss.</p>
 
-  <h2>Compile, fit, evaluate</h2>
-  <p>The comment says this is “configuring back-propagation”. Close enough: <code>compile</code> chooses how errors become weight updates.</p>
+  <h2>What training is (not just the Keras verbs)</h2>
+  <p>Three different numbers get confused in this notebook:</p>
+  <ul>
+    <li><strong>Loss</strong> (binary crossentropy) — the objective. Training’s only job is to shrink it. It is not a percent.</li>
+    <li><strong>Metric</strong> (accuracy) — a report card after thresholding ŷ at 0.5. Adam does not follow accuracy.</li>
+    <li><strong>Prediction</strong> — a probability in (0, 1). You still choose a threshold if you need a hard 0/1.</li>
+  </ul>
+  <p><strong>Backpropagation</strong> is the chain rule through the stack, so every weight — including the first Dense layer — gets a gradient of that loss. <strong>Adam</strong> uses those gradients to step. <strong>Learning rate</strong> is the step size. <strong>Batch size</strong> is how many rows you average the gradient over before a step (here: 10 — noisy, many updates per epoch). <strong>Epoch</strong> is one pass over the training rows (here: 100). More epochs are not automatically better; they are more chances to overfit.</p>
+  <p>The comment “configuring back-propagation” on <code>compile</code> is close: compile binds the loss and optimizer. <code>fit</code> is the loop that actually runs forward → loss → backward → step.</p>
 <pre><code>model.compile(
-    loss='binary_crossentropy',  # yes/no probability
-    optimizer='adam',            # adaptive step sizes
-    metrics=['accuracy']
+    loss='binary_crossentropy',  # matches sigmoid + yes/no
+    optimizer='adam',
+    metrics=['accuracy']         # watched, not optimized
 )
 model.fit(X_train, y_train, epochs=100, batch_size=10)
 scores = model.evaluate(X_test, y_test)
 model.predict(X_test[11:22])     # probabilities, not 0/1</code></pre>
-  <ul>
-    <li><strong>Loss</strong> is the number training tries to shrink. Binary crossentropy punishes confident wrong yes/no answers.</li>
-    <li><strong>Adam</strong> is the optimizer. You do not write the gradient loop yourself.</li>
-    <li><strong>Epoch</strong> = one full pass over the training rows. They used 100.</li>
-    <li><strong>Batch size</strong> = how many rows per weight update. They used 10. Smaller batches = more updates per epoch, noisier steps.</li>
-    <li><strong>Accuracy</strong> = fraction of correct 0/1 guesses (after thresholding 0.5). Their test run was about <strong>71%</strong>.</li>
-  </ul>
+  <p>Their test accuracy was about <strong>71%</strong>. That is a DNN on a tiny messy table, not a vision result. The reusable fact is the loop, not the 71%.</p>
 
-  <h2>Backprop in plain language</h2>
-  <p>The notebook comment says compile is “configuring back-propagation.” Here is what that means, without calculus:</p>
-  <ol class="steps">
-    <li>The net guesses (forward pass).</li>
-    <li><strong>Loss</strong> says how wrong that guess was.</li>
-    <li>A <strong>gradient</strong> for each weight: “if I nudge you up, does loss go down?”</li>
-    <li><strong>Backpropagation</strong> is just the chain rule through the layers, so every weight gets that nudge signal — even the first Dense layer.</li>
-    <li><strong>Adam</strong> (the optimizer) actually changes the weights. <strong>Learning rate</strong> is how big each change is.</li>
-  </ol>
-  <p>You never write that loop. <code>fit()</code> does it. A <strong>metric</strong> like accuracy is only a report card. Training follows the <em>loss</em>.</p>
-
-  <h2>Train / test split</h2>
-  <p><code>train_test_split(..., test_size=0.2)</code> keeps 20% of rows unseen. That is the only honest score. There is no validation set here — later MNIST adds <code>validation_split=0.2</code> so you can watch overfitting during training.</p>
+  <h2>Train / test (generalization, not a Keras detail)</h2>
+  <p>Fitting on all 768 rows and then scoring the same rows would measure memorization. <code>train_test_split(..., test_size=0.2)</code> holds out 20% so the score can claim something about <strong>generalization</strong>. This notebook has no separate validation set. Later MNIST adds <code>validation_split</code> so you can watch overfitting <em>during</em> training and stop. Theory: val is for decisions; test is for one honest number.</p>
 
   <div class="callout warn">
-    <h3>Mistakes this notebook leaves in</h3>
+    <h3>Theory the notebook skips (and why it matters)</h3>
     <ul>
-      <li>Features are not scaled. Glucose is ~0–200, pedigree is ~0–2. Always scale tables in real work (<code>StandardScaler</code>).</li>
-      <li>Zeros in Insulin / SkinThickness are often missing values, not true zeros.</li>
-      <li>No <code>random_state</code> — the split changes every run.</li>
+      <li>Features are not scaled. Glucose is ~0–200, pedigree is ~0–2. A Dense net with one shared learning rate treats those as different “sizes of knob.” Always scale tables (<code>StandardScaler</code>). Images later use /255 for the same reason: put coordinates on a comparable range.</li>
+      <li>Zeros in Insulin / SkinThickness are often missing values, not true zeros. The model will treat “missing” as a medical fact.</li>
+      <li>No <code>random_state</code> — the split (and therefore the score) changes every run. A theory of generalization needs a fixed test set.</li>
       <li>Printing <code>loss * 100</code> looks like a percent. Loss is not a percent.</li>
-      <li><code>predict</code> returns probabilities. You still choose a threshold (usually 0.5).</li>
     </ul>
   </div>
 
@@ -422,7 +494,7 @@ model.predict(X_test[11:22])     # probabilities, not 0/1</code></pre>
 <section class="page" id="page-l2">
   <div class="kicker">Lesson 02 · Deep_Learning_Image_Classification</div>
   <h1>First images: flatten and classify</h1>
-  <p class="lede">Same Keras loop as diabetes, now on 28×28 clothing photos. This is still <em>not</em> a CNN. It is a fully connected net that first destroys the 2D layout.</p>
+  <p class="lede">Same DNN idea as diabetes — a feedforward MLP — now on 28×28 clothing photos. This is still <em>not</em> a CNN. Flattening is a theoretical choice: treat the image as an unordered list of numbers. Convolution exists later because that choice throws the grid away.</p>
   <div class="from-file">Files (1), (2), and (3) are identical. Study one. Dataset: Fashion-MNIST, 60,000 train + 10,000 test, 10 classes.</div>
 
   <h2>Look before you train</h2>

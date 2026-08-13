@@ -77,10 +77,13 @@ window.addEventListener("hashchange", () => {
 /* ---------- quizzes ---------- */
 const QUIZZES = {
   theory: [
-    { q: "Machine learning means:", opts: ["Writing if/else for every photo", "A program that improves from examples", "Only drawing boxes", "Deleting test data"], a: 1, e: "You show examples (features + labels). The model adjusts weights so future guesses get better." },
-    { q: "A CNN is a neural net that:", opts: ["Only works on spreadsheets", "Slides small filters over an image", "Always uses softmax with 1 class", "Never uses ReLU"], a: 1, e: "Convolution = shared filters. That is what makes it a Convolutional Neural Network." },
+    { q: "A DNN (deep neural network) means:", opts: ["Only a CNN", "A neural net with several hidden layers", "A spreadsheet formula", "A net that never uses ReLU"], a: 1, e: "Deep = stacked hidden layers. An MLP, a CNN, a Siamese net, and U-Net are all DNNs." },
+    { q: "If you stack Dense layers with no activations, the whole net is equivalent to:", opts: ["A deep hierarchy of parts", "One linear map (a hyperplane)", "A convolution", "Softmax"], a: 1, e: "Composition of linear maps is linear. Nonlinear activations are what make depth useful." },
+    { q: "Vanishing gradients happen when:", opts: ["The learning rate is zero", "Many layers have tiny derivatives, so early weights barely update", "You use too much data", "Softmax sums to 1"], a: 1, e: "Sigmoid in every layer saturates. ReLU in hidden layers lets the gradient travel farther." },
+    { q: "A CNN is a neural net that:", opts: ["Only works on spreadsheets", "Is a DNN whose hidden layers are mostly convolutions", "Always uses softmax with 1 class", "Never uses ReLU"], a: 1, e: "CNN ⊂ DNN. Convolution = shared local filters — an inductive bias for images." },
     { q: "Loss vs metric:", opts: ["They are the same number", "Loss is what training shrinks; a metric is a score you watch", "Metric updates weights", "Loss is always a percent"], a: 1, e: "compile(loss=..., metrics=[...]). Adam follows the loss. Accuracy/Dice/F1 are reports." },
-    { q: "After a basic CNN, transfer learning means:", opts: ["Throwing ImageNet away", "Reusing a net already trained on a huge dataset", "Augmenting the test set", "Predicting without images"], a: 1, e: "Freeze a backbone (MobileNet), train a small head, then optionally fine-tune slowly." }
+    { q: "The inductive bias of a Dense MLP is:", opts: ["Patterns are local and shift-equivariant", "Any input may mix with any other", "Identity is a distance", "Labels are pixel maps"], a: 1, e: "Fully connected: good for a table of numbers, wasteful on raw photos." },
+    { q: "After a basic CNN, transfer learning means:", opts: ["Throwing ImageNet away", "Reusing a net already trained on a huge dataset", "Augmenting the test set", "Predicting without images"], a: 1, e: "Low-level visual statistics transfer. Freeze a backbone, train a small head, then optionally fine-tune slowly." }
   ],
   l0: [
     { q: "A grayscale pixel value of 0 usually means:", opts: ["White", "Black", "Red", "Transparent"], a: 1, e: "In typical image arrays, 0 is black and 255 is white." },
@@ -88,9 +91,11 @@ const QUIZZES = {
     { q: "Classification means:", opts: ["Drawing a box around an object", "Assigning a label/class", "Measuring distance between faces", "Removing noise"], a: 1, e: "Classification picks a class. Detection finds where. Segmentation labels every pixel. Recognition asks who." }
   ],
   l1: [
-    { q: "For diabetes yes/no, the output activation should be:", opts: ["softmax", "relu", "sigmoid", "tanh"], a: 2, e: "Sigmoid squashes one number into a probability between 0 and 1." },
-    { q: "binary_crossentropy is used when:", opts: ["There are 10 exclusive classes", "There are two outcomes (yes/no)", "Labels are one-hot", "Images are RGB"], a: 1, e: "Binary problems use sigmoid + binary crossentropy." },
-    { q: "A Dense layer means:", opts: ["Only nearby pixels connect", "Every input connects to every neuron", "Weights are frozen", "The layer does convolution"], a: 1, e: "Dense = fully connected." }
+    { q: "The diabetes notebook is which kind of model?", opts: ["A CNN", "A feedforward DNN / MLP (stacked Dense layers)", "A U-Net", "A Siamese net"], a: 1, e: "No convolution, no images. Several hidden Dense layers = a deep MLP, which is a DNN." },
+    { q: "For diabetes yes/no, the output activation should be:", opts: ["softmax", "relu", "sigmoid", "tanh"], a: 2, e: "Sigmoid squashes one number into a probability between 0 and 1. Softmax is for exclusive multi-class." },
+    { q: "Why not put ReLU on the last layer here?", opts: ["ReLU is slower", "You need a probability in (0,1), not an unbounded number", "ReLU only works on images", "Adam forbids it"], a: 1, e: "Hidden layers want ReLU so gradients flow. The output must match the loss: a yes/no probability." },
+    { q: "binary_crossentropy is used when:", opts: ["There are 10 exclusive classes", "There are two outcomes (yes/no)", "Labels are one-hot", "Images are RGB"], a: 1, e: "Binary problems use sigmoid + binary crossentropy. That pairing is theory, not a Keras quirk." },
+    { q: "A Dense layer means:", opts: ["Only nearby pixels connect", "Every input connects to every neuron", "Weights are frozen", "The layer does convolution"], a: 1, e: "Dense = fully connected. That is the MLP inductive bias." }
   ],
   l2: [
     { q: "Flatten on a 28×28 image produces:", opts: ["28 values", "56 values", "784 values", "10 values"], a: 2, e: "28 × 28 = 784. Each pixel becomes one number in a long list." },
@@ -675,14 +680,21 @@ const GLOSSARY = [
   { g: "Data", t: "Shape / tensor", d: "How the array is laid out, e.g. (28,28,1). A tensor is a multi-dimensional array." },
   { g: "Data", t: "Channel", d: "1 = gray, 3 = RGB. After Conv2D(32) you have 32 feature-map channels." },
   { g: "Data", t: "Class imbalance", d: "One class is rare. Accuracy looks high if you always guess the common class." },
-  { g: "Neural net", t: "Neuron", d: "z = w·x + b, then an activation. One little calculator." },
+  { g: "Neural net", t: "DNN / deep neural network", d: "A neural net with several hidden layers. MLP, CNN, Siamese, and U-Net in this folder are all DNNs. Deep describes depth, not “must be convolution.”" },
+  { g: "Neural net", t: "MLP (multilayer perceptron)", d: "A DNN whose hidden layers are all Dense. Diabetes, Fashion-MNIST, and MNIST part A. No convolution." },
+  { g: "Neural net", t: "Feedforward", d: "Data goes input → hidden → output. No loops in time. Residual/U-Net skips copy tensors sideways; they still do not cycle." },
+  { g: "Neural net", t: "Inductive bias", d: "The assumption baked into the architecture. MLP: any feature may mix with any other. CNN: patterns are local and reusable across position." },
+  { g: "Neural net", t: "Vanishing gradients", d: "Early layers get a ~0 update because many tiny derivatives multiplied together. Why we use ReLU in hidden layers, not sigmoid-everywhere." },
+  { g: "Neural net", t: "Exploding gradients", d: "The opposite: products of large derivatives blow up, loss becomes NaN. Less common in these small notebooks." },
+  { g: "Neural net", t: "Capacity", d: "How large a family of functions the net can represent. More depth/width → more capacity → easier to overfit." },
+  { g: "Neural net", t: "Universal approximation", d: "A wide enough single hidden layer can approximate many functions. Depth is still useful: hierarchical reuse needs fewer weights." },
   { g: "Neural net", t: "Weight", d: "A number the model learns. Training changes weights so guesses improve." },
   { g: "Neural net", t: "Bias", d: "A learned offset, like the intercept in a line." },
   { g: "Neural net", t: "Activation", d: "A curve after z. ReLU, sigmoid, softmax. Without it, stacked layers collapse to one linear map." },
   { g: "Neural net", t: "ReLU", d: "max(0, z). Default hidden activation in these notebooks." },
   { g: "Neural net", t: "Sigmoid", d: "Squishes one number to (0,1). Binary last layer." },
   { g: "Neural net", t: "Softmax", d: "K scores → K probabilities that sum to 1. Exclusive classes (10 digits, 5 flowers)." },
-  { g: "Neural net", t: "Dense / MLP", d: "Every input connects to every neuron. Fine for tables; wasteful on raw photos." },
+  { g: "Neural net", t: "Dense layer", d: "Every input connects to every neuron in this layer. Fine for tables; wasteful on raw photos. A stack of Dense layers is an MLP." },
   { g: "Neural net", t: "Hidden layer", d: "Any layer that is not the input and not the final output." },
   { g: "Neural net", t: "Sequential vs Functional", d: "Sequential = a line. Functional = can branch and merge (Siamese, U-Net skips)." },
   { g: "Neural net", t: "Parameter", d: "A weight or bias training can change. model.summary() counts them." },
@@ -758,10 +770,9 @@ function initTheme() {
   const apply = (t) => {
     document.documentElement.setAttribute("data-theme", t);
     localStorage.setItem("cv-theme", t);
-    if (btn) btn.textContent = t === "dark" ? "Light mode" : "Dark mode";
+    if (btn) btn.textContent = t === "dark" ? "Day mode" : "Night mode";
   };
-  let t = localStorage.getItem("cv-theme");
-  if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  let t = localStorage.getItem("cv-theme") || "dark";
   apply(t);
   if (btn) btn.addEventListener("click", () => {
     apply(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
